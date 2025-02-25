@@ -43,6 +43,3 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-/src/main/kotlin/core/
-/src/main/kotlin/command/
-/src/main/kotlin/car.json
