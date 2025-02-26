@@ -1,14 +1,16 @@
 package org.example.core
 
 import org.example.commands.*
+import java.io.File
 import java.util.Scanner
 
 class CommandProcessor(
     private val commands: Map<String, Command>,
     private val scanner: Scanner,
-    private var collectionManager: CollectionManager
+    private var collectionManager: CollectionManager,
 ) {
     fun start() {
+
         println("Transport manager 3000")
         printHelp()
 
@@ -30,7 +32,7 @@ class CommandProcessor(
             return
         }
         try {
-            command.execute(parts.drop(1),collectionManager)
+            command.execute(parts.drop(1), collectionManager)
         } catch (e: Exception) {
             println("Error executing command: ${e.message}")
         }

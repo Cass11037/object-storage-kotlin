@@ -4,9 +4,10 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.example.model.Vehicle
 import java.io.File
+import java.util.LinkedList
 
 class CollectionManager(private val filename: String) {
-    private val vehicles = mutableListOf<Vehicle>()
+    private val vehicles: MutableList<Vehicle> = LinkedList()
     private var lastId = 0
 
     init {
