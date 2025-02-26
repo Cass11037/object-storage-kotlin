@@ -1,3 +1,4 @@
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import java.util.Date
 
@@ -6,7 +7,8 @@ data class Vehicle(
     val id: Int,
     val name: String,
     val coordinates: Coordinates,
-    // Как то сериализировать надо val creationDate: Date,
+    // Как то сериализировать надо
+    @Contextual val creationDate: Date,
     val enginePower: Double,
     val distanceTravelled: Double?,
     val type: VehicleType?,
