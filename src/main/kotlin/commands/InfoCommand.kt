@@ -4,7 +4,7 @@ import BaseCommand
 
 class InfoCommand : BaseCommand (
     name = "info",
-    descr = "Displays information about the project."
+    description = "Displays information about the project."
 ){
     override fun execute(args: List<String>) {
         println("Информация:")

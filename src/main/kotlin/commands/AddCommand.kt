@@ -1,11 +1,8 @@
-import BaseCommand
-import Coordinates
-import kotlinx.serialization.Contextual
 import java.util.*
 
 class AddCommand : BaseCommand (
     name = "add",
-    descr = "Добавить новый элемент в коллекцию."
+    description = "Добавить новый элемент в коллекцию."
 ){
     override fun execute(args: List<String>) {
         try {

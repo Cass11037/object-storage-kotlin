@@ -4,9 +4,10 @@ import BaseCommand
 
 class ClearCommand : BaseCommand (
     name = "clear",
-    descr = "Clear collection."
+    description = "Clear collection."
 ) {
     override fun execute(args: List<String>) {
-        collection // очистить
+        collection.clear()
+        println("Collection is clear.")
     }
 }

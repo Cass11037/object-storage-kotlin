@@ -1,7 +1,6 @@
-import java.util.LinkedList
 class ShowCommand : BaseCommand(
     name = "show",
-    descr = "Display all the items in the collection."
+    description = "Display all the items in the collection."
 ) {
     override fun execute(args: List<String>) {
         if(collection.getAll().isEmpty()) {
