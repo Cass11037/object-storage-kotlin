@@ -7,8 +7,7 @@ data class Vehicle(
     val id: Int,
     val name: String,
     val coordinates: Coordinates,
-    // Как то сериализировать надо
-    @Contextual val creationDate: Date,
+    val creationDate: Long,
     val enginePower: Double,
     val distanceTravelled: Double?,
     val type: VehicleType?,

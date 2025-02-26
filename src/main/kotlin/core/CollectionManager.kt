@@ -28,10 +28,12 @@ class CollectionManager(private val filename: String) {
     }
 
     fun addVehicle(vehicle: Vehicle) {
-        vehicles.add(vehicle.copy(id = ++lastId, creationDate = Date()))
+        vehicles.add(vehicle.copy(id = ++lastId, creationDate = 199191919))
     }
 
     fun getAll() = vehicles.toList()
+    //TODO removeById
+
 
 //    Обработку остальных команд (удаление, обновление)
 //    Валидацию входных данных
