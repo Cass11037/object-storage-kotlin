@@ -1,15 +1,15 @@
-package org.example.commands
 import java.util.LinkedList
-import org.example.model.*
 class ShowCommand : BaseCommand(
     name = "show",
     info = "Вывести все элементы коллекции."
 ) {
-    fun execute () {
-        if(collection.isEmpty()) {
+    override fun execute(args: List<String>) {
+        if(collection.getAll().isEmpty()) {
             println("Collection is empty.")
         } else {
-
+            collection.getAll().forEach {
+                vehicle -> println(vehicle)
+            }
         }
     }
 }
