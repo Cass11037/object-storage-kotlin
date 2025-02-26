@@ -1,3 +1,4 @@
+
 enum class FuelType {
     KEROSENE,
     DIESEL,
