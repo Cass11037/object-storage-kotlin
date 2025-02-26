@@ -1,5 +1,7 @@
 package org.example
 
+import org.example.commands.InfoCommand
+
 fun main() {
     fun parseInputAdvanced(input: String): Pair<String, List<String>> {
         val regex = """("[^"]*"|'[^']*'|\S+)""".toRegex()
@@ -15,4 +17,7 @@ fun main() {
     val (cmd, args) = parseInputAdvanced("update 42 'Tesla Model X' 150.5")
     println(cmd)
     println(args)
+
+    val inf = InfoCommand();
+    inf.execute();
 }

@@ -1,6 +1,6 @@
 class HelpCommand(private val commands: List<Command>)  : BaseCommand (
     name = "help",
-    info = "Вывести список всех доступных команд."
+    descr = "Вывести список всех доступных команд."
 ){
     override fun execute(args: List<String>) {
         println("Доступные команды:")
