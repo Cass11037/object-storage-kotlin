@@ -1,7 +1,7 @@
 import java.util.Scanner
 
 class CommandProcessor(
-    private val commands: Map<String, Command>,
+    private val commands: Map<String, BaseCommand>,
     private val scanner: Scanner
 ) {
     fun start() {
@@ -37,7 +37,7 @@ class CommandProcessor(
     private fun printHelp() {
         println("Available commands:")
         commands.values.forEach {
-            println("  ${it.name.padEnd(10)} - ${it.description}")
+            println("  ${it.getName().padEnd(10)} - ${it.getDescription()}")
         }
     }
 }
