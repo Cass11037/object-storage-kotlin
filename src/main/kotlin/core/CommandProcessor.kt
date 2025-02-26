@@ -1,3 +1,6 @@
+package org.example.core
+
+import commands.BaseCommand
 import java.util.Scanner
 
 class CommandProcessor(

@@ -1,10 +1,14 @@
-package org.example.commands
 
-import BaseCommand
+import CollectionManager
+import VehicleReader
+import commands.BaseCommand
 
-class InfoCommand : BaseCommand (
+class InfoCommand(
+    collection: CollectionManager,
+    private val reader: VehicleReader
+) :BaseCommand(
     name = "info",
-    descr = "Выводит информацию о проекте."
+    description = "Выводит информацию о проекте.", collection
 ){
     override fun execute(args: List<String>) {
         println("Информация:")

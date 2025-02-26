@@ -24,3 +24,18 @@ tasks.test {
 kotlin {
     jvmToolchain(17)
 }
+
+application {
+    mainClass.set("org.example.MainKt")
+}
+
+tasks {
+    shadowJar {
+        archiveBaseName.set("your-app")
+        archiveVersion.set("1.0")
+        archiveClassifier.set("")
+        manifest {
+            attributes["Main-Class"] = application.mainClass.get()
+        }
+    }
+}

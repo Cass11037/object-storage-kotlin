@@ -1,3 +1,6 @@
+package org.example.core
+
+import org.example.model.*
 import java.util.Scanner
 
 class VehicleReader(private val scanner: Scanner) {

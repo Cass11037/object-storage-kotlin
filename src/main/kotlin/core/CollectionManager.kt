@@ -1,7 +1,9 @@
+package org.example.core
+
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.example.model.Vehicle
 import java.io.File
-import java.util.Date
 
 class CollectionManager(private val filename: String) {
     private val vehicles = mutableListOf<Vehicle>()

@@ -1,6 +1,5 @@
-import kotlinx.serialization.Contextual
+package org.example.model
 import kotlinx.serialization.Serializable
-import java.util.Date
 
 @Serializable
 data class Vehicle(
