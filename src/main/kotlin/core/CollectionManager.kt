@@ -35,6 +35,14 @@ class CollectionManager(private val filename: String) {
 
     fun getAll() = vehicles.toList()
     //TODO removeById
+    fun clear() {
+        vehicles.clear()
+        lastId = 0
+    }
+    fun getById (id : Int) : Vehicle{
+        return vehicles[id]
+    }
+
 
 
 //    Обработку остальных команд (удаление, обновление)

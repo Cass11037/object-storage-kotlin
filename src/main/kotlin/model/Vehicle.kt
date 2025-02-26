@@ -4,13 +4,13 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Vehicle(
     val id: Int,
-    val name: String,
-    val coordinates: Coordinates,
+    var name: String,
+    var coordinates: Coordinates,
     val creationDate: Long,
-    val enginePower: Double,
-    val distanceTravelled: Double?,
-    val type: VehicleType?,
-    val fuelType: FuelType?
+    var enginePower: Double,
+    var distanceTravelled: Double?,
+    var type: VehicleType?,
+    var fuelType: FuelType?
 ) {
     init {
         require(id > 0) { "ID must be positive" }
