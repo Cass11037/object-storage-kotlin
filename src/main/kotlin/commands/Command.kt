@@ -1,8 +1,10 @@
 package org.example.commands
+import org.example.core.CollectionManager
 
-
-interface Command {
-    fun getName() : String
-    fun getDescription(): String
-    fun execute(args: List<String> = emptyList())
+abstract class Command  (
+    private val name: String,
+    private val description: String
+) : CommandInterface {
+    override fun getName(): String = name
+    override fun getDescription(): String = description
 }

@@ -1,20 +1,20 @@
 package org.example.core
 
-import commands.BaseCommand
+import org.example.commands.*
 import java.util.Scanner
 
 class CommandProcessor(
-    private val commands: Map<String, BaseCommand>,
-    private val scanner: Scanner
+    private val commands: Map<String, Command>,
+    private val scanner: Scanner,
+    private var collectionManager: CollectionManager
 ) {
     fun start() {
-        println("Vehicle Collection Manager")
+        println("Transport manager 3000")
         printHelp()
 
         while (true) {
             print("> ")
             val input = scanner.nextLine().trim()
-
             when {
                 input == "exit" -> break
                 input.isEmpty() -> continue
@@ -29,9 +29,8 @@ class CommandProcessor(
             println("Unknown command: ${parts[0]}")
             return
         }
-
         try {
-            command.execute(parts.drop(1))
+            command.execute(parts.drop(1),collectionManager)
         } catch (e: Exception) {
             println("Error executing command: ${e.message}")
         }

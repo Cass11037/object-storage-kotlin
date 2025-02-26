@@ -34,7 +34,7 @@ class VehicleReader(private val scanner: Scanner) {
 
     private fun readBoundedInt(prompt: String, min: Int = Int.MIN_VALUE, max: Int): Int {
         while (true) {
-            print("$prompt ($min-$max): ")
+            print("$prompt (<$max): ")
             val input = scanner.nextLine()
             try {
                 val value = input.toInt()
@@ -86,6 +86,7 @@ class VehicleReader(private val scanner: Scanner) {
             }
         }
     }
+    //TODO simplify
     private inline fun <reified T : Enum<T>> readEnum(prompt: String, enumClass: Class<T>): T? {
         val values = enumClass.enumConstants.joinToString { it.name }
         println("$prompt (доступные значения: $values)")

@@ -1,12 +1,1 @@
-[
-  {
-    "id": 1,
-    "name": "Tesla",
-    "coordinates": {"x": 100, "y": 200.5},
-    "creationDate": 1678901234567,
-    "enginePower": 300.0,
-    "distanceTravelled": 1500.5,
-    "type": "BOAT",
-    "fuelType": "ALCOHOL"
-  }
-]
+[]

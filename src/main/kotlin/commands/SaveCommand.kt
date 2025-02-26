@@ -1,12 +1,12 @@
 package org.example.commands
 
-import BaseCommand
+import org.example.core.CollectionManager
 
-class SaveCommand : BaseCommand (
+class SaveCommand : Command (
     name = "save",
     description = "Save the collection to a file."
 ) {
-    override fun execute(args: List<String>) {
+    override fun execute(args: List<String>, collectionManager: CollectionManager) {
 
     }
 }

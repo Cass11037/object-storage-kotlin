@@ -30,23 +30,19 @@ class CollectionManager(private val filename: String) {
     }
 
     fun addVehicle(vehicle: Vehicle) {
-        vehicles.add(vehicle.copy(id = ++lastId, creationDate = 199191919))
+        vehicles.add(vehicle.copy(id = ++lastId, creationDate = 199191919))//TODO creation date
     }
 
     fun getAll() = vehicles.toList()
+
+
     //TODO removeById
     fun clear() {
         vehicles.clear()
         lastId = 0
+        saveToFile()
     }
     fun getById (id : Int) : Vehicle{
         return vehicles[id]
     }
-
-
-
-//    Обработку остальных команд (удаление, обновление)
-//    Валидацию входных данных
-//    Пагинацию при выводе
-//    Логирование операций
 }

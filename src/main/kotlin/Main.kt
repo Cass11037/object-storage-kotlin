@@ -1,27 +1,26 @@
 package org.example
 
-import CollectionManager
-import CommandProcessor
-import VehicleReader
-import commands.AddCommand
+import org.example.commands.AddCommand
+import org.example.commands.ClearCommand
+import org.example.commands.ShowCommand
+import org.example.core.CollectionManager
+import org.example.core.CommandProcessor
+import org.example.core.VehicleReader
 import java.util.*
 
 
-fun main(args: Array<String>) {
-    if (args.isEmpty()) {
-        println("Usage: program <datafile.json>")
-        return
-    }
-
-    val collectionManager = CollectionManager(args[0])
+fun main() {
+    val collectionManager = CollectionManager("data.json")
     val scanner = Scanner(System.`in`)
     val vehicleReader = VehicleReader(scanner)
 
     val commands = listOf(
-        AddCommand(collectionManager, vehicleReader),
+        AddCommand(vehicleReader),
+        ClearCommand(),
+        ShowCommand()
     ).associateBy { it.getName() }
 
-    CommandProcessor(commands, scanner).start()
+    CommandProcessor(commands, scanner, collectionManager).start()
     collectionManager.saveToFile()
-    println("Data saved to ${args[0]}")
+    println("Data saved to data.json")
 }

@@ -1,15 +1,17 @@
 package org.example.commands
 
-import BaseCommand
-import Coordinates
-import Vehicle
+import org.example.core.CollectionManager
+import org.example.model.Coordinates
+import org.example.model.Vehicle
+import org.example.model.VehicleType
 
-class UpdateIdCommand : BaseCommand (
+
+class UpdateIdCommand : Command (
     name = "update_id",
     description = "Update the element value by id."
 ) {
-    override fun execute(args: List<String>) {
-        var vehicle: Vehicle= collection.getById(args[0].toInt())
+    override fun execute(args: List<String>, collectionManager: CollectionManager) {
+        var vehicle: Vehicle = collectionManager.getById(args[0].toInt())
         var propertyToChange = args[1]
         when(propertyToChange) {
             // val id: Int,
@@ -24,7 +26,7 @@ class UpdateIdCommand : BaseCommand (
             "coordinates" -> vehicle.coordinates = Coordinates(args[2].toInt(), args[3].toFloat())
             "enginePower" -> vehicle.enginePower = args[2].toDouble()
             "" -> vehicle.distanceTravelled = args[2].toDouble()
-            "" -> vehicle.type = args[2]
+            "" -> vehicle.type =VehicleType.BOAT
         }
     }
 }
