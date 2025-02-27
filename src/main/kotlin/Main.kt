@@ -1,12 +1,9 @@
 package org.example
 
-import org.example.commands.AddCommand
-import org.example.commands.ClearCommand
-import org.example.commands.ShowCommand
+import org.example.commands.*
 import org.example.core.CollectionManager
 import org.example.core.CommandProcessor
 import org.example.core.VehicleReader
-import java.io.File
 import java.util.*
 
 
@@ -23,9 +20,12 @@ fun main() {
         else println("Файл не найден, попробуйте еще раз")
     }
     val commands = listOf(
+        HelpCommand(emptyMap()),
         AddCommand(vehicleReader),
         ClearCommand(),
-        ShowCommand()
+        ShowCommand(),
+        InfoCommand(vehicleReader),
+
     ).associateBy { it.getName() }
 
     val collectionManager = CollectionManager(fileName)

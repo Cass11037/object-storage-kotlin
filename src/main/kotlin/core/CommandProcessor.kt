@@ -39,9 +39,7 @@ class CommandProcessor(
     }
 
     private fun printHelp() {
-        println("Available commands:")
-        commands.values.forEach {
-            println("  ${it.getName().padEnd(10)} - ${it.getDescription()}")
-        }
+        val help = HelpCommand(commands)
+        help.execute(emptyList(), collectionManager)
     }
 }
