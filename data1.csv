@@ -1,0 +1,5 @@
+id,name,coordinatesX,coordinatesY,creationDate,enginePower,distanceTravelled,type,fuelType
+1,Tesla Cybertruck,100,200.5,1678901234567,300.0,1500.5,BOAT,ALCOHOL
+2,Mars Rover,500,800.2,1678912345678,450.5,,HOVERBOARD,NUCLEAR
+3,Vespa Classic,300,400.0,1678923456789,150.0,250.7,BICYCLE,MANPOWER
+4,New,80,-900.0,1740668589422,1000.0,,BICYCLE,

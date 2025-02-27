@@ -2,11 +2,11 @@ package org.example.commands
 
 
 import org.example.core.CollectionManager
-import org.example.core.VehicleReader
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
-class InfoCommand(
-    private val reader: VehicleReader
-) :Command(
+class InfoCommand :Command(
     name = "info",
     description = "Выводит информацию о проекте."
 ){
@@ -15,7 +15,11 @@ class InfoCommand(
         println("Тип коллекции: ${collectionManager.getAll()::class.simpleName}")
         println("Количество элементов: ${collectionManager.getAll().size}")
         if (collectionManager.getAll().isNotEmpty()) {
-            println("Дата инициализации: ${collectionManager.getAll().first().creationDate}")
+            val readableDate = Instant.ofEpochMilli(collectionManager.getAll().first().creationDate)
+                .atZone(ZoneId.of("UTC"))
+                .toLocalDateTime()
+                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            println("Дата инициализации: $readableDate")
         } else {
             println("Коллекция пуста.")
         }

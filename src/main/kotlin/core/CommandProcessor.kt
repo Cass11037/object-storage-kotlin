@@ -7,13 +7,12 @@ import java.util.Scanner
 class CommandProcessor(
     private val commands: Map<String, Command>,
     private val scanner: Scanner,
-    private var collectionManager: CollectionManager,
+    private var fileName: String
 ) {
+    val collectionManager = CollectionManager(fileName)
     fun start() {
-
         println("Transport manager 3000")
         printHelp()
-
         while (true) {
             print("> ")
             val input = scanner.nextLine().trim()
@@ -23,6 +22,7 @@ class CommandProcessor(
                 else -> processCommand(input)
             }
         }
+        saveToFile()
     }
 
     private fun processCommand(input: String) {
@@ -41,5 +41,9 @@ class CommandProcessor(
     private fun printHelp() {
         val help = HelpCommand(commands)
         help.execute(emptyList(), collectionManager)
+    }
+    fun saveToFile() {
+        collectionManager.saveToFile()
+        println("Data saved to $fileName")
     }
 }
