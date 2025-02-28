@@ -41,7 +41,7 @@ class CommandProcessor(
    // private fun printHelp() {
  //       commands.get["help"]
     //}
-    fun saveToFile() {
+   private fun saveToFile() { // сделала приватным
         collectionManager.saveToFile()
         println("Data saved to $fileName")
     }

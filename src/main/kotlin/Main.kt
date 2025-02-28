@@ -6,7 +6,6 @@ import org.example.core.VehicleReader
 import java.io.File
 import java.util.*
 
-
 fun main() {
     val scanner = Scanner(System.`in`)
     var fileName: String
