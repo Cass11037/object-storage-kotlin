@@ -13,7 +13,7 @@ class CollectionManager(private val filename: String) {
         loadFromFile()
         lastId = vehicles.maxOfOrNull { it.id } ?: 0
     }
-
+    //TODO delete all about lastId and reading from the file
     private fun loadFromFile(): List<String> {
         val warnings = mutableListOf<String>()
         val errors = mutableListOf<String>()
@@ -146,10 +146,14 @@ class CollectionManager(private val filename: String) {
     fun getById(id: Int): Vehicle? {
         return vehicles.find { it.id == id }
     }
+    fun size(): Int {
+        return vehicles.size
+    }
 
     fun clear() {
         vehicles.clear()
         lastId = 0
+        VehicleReader.clearId()
         //saveToFile() должен очищаться не файл, а введенные пользователем данные?
     }
 

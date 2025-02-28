@@ -5,7 +5,10 @@ import java.util.Scanner
 
 class VehicleReader(private val scanner: Scanner) {
     companion object {
-        private var nextId = 1 // Общая переменная для всех экземпляров
+        private var nextId = 0 // Общая переменная для всех экземпляров
+        fun clearId () {
+            nextId = 0
+        }
     }
 
     fun readVehicle(): Vehicle {

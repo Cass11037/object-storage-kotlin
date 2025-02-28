@@ -13,7 +13,7 @@ class InfoCommand :Command(
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
         println("Информация:")
         println("Тип коллекции: ${collectionManager.getAll()::class.simpleName}")
-        println("Количество элементов: ${collectionManager.getAll().size}")
+        println("Количество элементов: ${collectionManager.size()}")
         if (collectionManager.getAll().isNotEmpty()) {
             val readableDate = Instant.ofEpochMilli(collectionManager.getAll().first().creationDate)
                 .atZone(ZoneId.of("UTC"))
