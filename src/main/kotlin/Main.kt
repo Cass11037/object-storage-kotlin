@@ -43,7 +43,7 @@ fun main() {
         ShowCommand(),
         RemoveByIdCommand(),
         SaveCommand(),
-        UpdateIdCommand()
+        UpdateIdCommand(vehicleReader)
     ).associateBy { it.getName() }
     val help = HelpCommand(commands)
     val allCommands = listOf(
@@ -55,7 +55,7 @@ fun main() {
         ShowCommand(),
         RemoveByIdCommand(),
         SaveCommand(),
-        UpdateIdCommand()
+        UpdateIdCommand(vehicleReader)
     ).associateBy { it.getName() }
     CommandProcessor(allCommands, scanner, fileName).start()
 }

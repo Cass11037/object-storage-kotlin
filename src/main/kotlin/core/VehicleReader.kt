@@ -10,7 +10,19 @@ class VehicleReader(private val scanner: Scanner) {
             nextId = 1
         }
     }
-
+    fun readUpdatesForVehicle(vehicle: Vehicle) {
+        println("You can change: name, coordinates, enginePower, distanceTravelled, type, fuelType." )
+        println("What do you want to change? > ")
+        val input = scanner.nextLine()
+        when (input) {
+            "name" -> vehicle.name = readNonEmptyString("Название транспортного средства")
+            "coordinates" -> vehicle.coordinates = readCoordinates()
+            "enginePower" -> vehicle.enginePower = readPositiveDouble("Мощность двигателя")
+            "distanceTravelled" -> vehicle.distanceTravelled = readOptionalDouble("Пройденная дистанция")
+            "type" -> vehicle.type = readEnum("Тип транспорта", VehicleType::class.java)
+            "fuelType" -> readEnum("Тип топлива", FuelType::class.java)
+        }
+    }
     fun readVehicle(): Vehicle {
         return Vehicle(
             id = nextId++,  // Временное значение
