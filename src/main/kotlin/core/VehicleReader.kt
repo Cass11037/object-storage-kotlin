@@ -4,9 +4,13 @@ import org.example.model.*
 import java.util.Scanner
 
 class VehicleReader(private val scanner: Scanner) {
+    companion object {
+        private var nextId = 1 // Общая переменная для всех экземпляров
+    }
+
     fun readVehicle(): Vehicle {
         return Vehicle(
-            id = 0,  // Временное значение
+            id = nextId++,  // Временное значение
             name = readNonEmptyString("Название транспортного средства"),
             coordinates = readCoordinates(),
             creationDate = System.currentTimeMillis(),
