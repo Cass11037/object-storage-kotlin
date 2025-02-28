@@ -161,7 +161,7 @@ class CollectionManager(private val filename: String) {
 
     fun clear() {
         vehicles.clear()
-        lastId = 0
+        lastId = 1
         VehicleReader.clearId()
         //saveToFile() должен очищаться не файл, а введенные пользователем данные?
     }
