@@ -150,7 +150,7 @@ class CollectionManager(private val filename: String) {
     fun clear() {
         vehicles.clear()
         lastId = 0
-        saveToFile()
+        //saveToFile() должен очищаться не файл, а введенные пользователем данные?
     }
 
     fun getAll() = vehicles.toList()

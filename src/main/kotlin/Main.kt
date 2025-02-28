@@ -6,18 +6,33 @@ import org.example.core.VehicleReader
 import java.io.File
 import java.util.*
 
-fun main() {
-    val scanner = Scanner(System.`in`)
+fun fileReader(scanner: Scanner) : String {
     var fileName: String
     while (true) {
-        println("Доступные файлы: data1.csv, data2.csv, data3.csv")
-        println("Введите название файла, который хотите открыть: ")
+        println("Введите название файла, в котором будете работать: ")
         print("> ")
         fileName = scanner.nextLine().trim()
         val file = File(fileName)
-        if (file.exists()) break
-        else println("Файл не найден, попробуйте еще раз")
+        if (!fileName.endsWith(".csv")) {
+            println("Файл должен иметь расширение .csv")
+            continue;
+        }
+        if(file.exists()) {
+            println("Файл '$fileName' уже существует.")
+        } else {
+            if(file.createNewFile()) {
+                println("Файл '$fileName' успешно создан.")
+                break;
+            }else {
+                println("Не удалось создать файл '$fileName'.")
+            }
+        }
     }
+    return fileName
+}
+fun main() {
+    val scanner = Scanner(System.`in`)
+    val fileName = fileReader(scanner)
     val vehicleReader = VehicleReader(scanner)
     val commands = listOf(
         HelpCommand(emptyMap()),
