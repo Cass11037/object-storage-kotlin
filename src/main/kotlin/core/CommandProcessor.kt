@@ -12,7 +12,7 @@ class CommandProcessor(
     val collectionManager = CollectionManager(fileName)
     fun start() {
         println("Transport manager 3000")
-        printHelp()
+        commands["help"]?.execute(emptyList(),collectionManager)
         while (true) {
             print("> ")
             val input = scanner.nextLine().trim()
@@ -38,10 +38,9 @@ class CommandProcessor(
         }
     }
 
-    private fun printHelp() {
-        val help = HelpCommand(commands)
-        help.execute(emptyList(), collectionManager)
-    }
+   // private fun printHelp() {
+ //       commands.get["help"]
+    //}
     fun saveToFile() {
         collectionManager.saveToFile()
         println("Data saved to $fileName")

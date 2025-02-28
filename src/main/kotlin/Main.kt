@@ -27,5 +27,13 @@ fun main() {
         ShowCommand(),
         InfoCommand(),
     ).associateBy { it.getName() }
-    CommandProcessor(commands, scanner, fileName).start()
+    val help = HelpCommand(commands)
+    val allCommands = listOf(
+        help,
+        AddCommand(vehicleReader),
+        ClearCommand(),
+        ShowCommand(),
+        InfoCommand(),
+    ).associateBy { it.getName() }
+    CommandProcessor(allCommands, scanner, fileName).start()
 }
