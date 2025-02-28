@@ -35,19 +35,27 @@ fun main() {
     val fileName = fileReader(scanner)
     val vehicleReader = VehicleReader(scanner)
     val commands = listOf(
-        HelpCommand(emptyMap()),
         AddCommand(vehicleReader),
         ClearCommand(),
-        ShowCommand(),
+        HelpCommand(emptyMap()),
         InfoCommand(),
+        ExitCommand(),
+        ShowCommand(),
+        RemoveByIdCommand(),
+        SaveCommand(),
+        UpdateIdCommand()
     ).associateBy { it.getName() }
     val help = HelpCommand(commands)
     val allCommands = listOf(
         help,
         AddCommand(vehicleReader),
         ClearCommand(),
-        ShowCommand(),
         InfoCommand(),
+        ExitCommand(),
+        ShowCommand(),
+        RemoveByIdCommand(),
+        SaveCommand(),
+        UpdateIdCommand()
     ).associateBy { it.getName() }
     CommandProcessor(allCommands, scanner, fileName).start()
 }

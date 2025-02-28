@@ -22,7 +22,6 @@ class CommandProcessor(
                 else -> processCommand(input)
             }
         }
-        saveToFile()
     }
 
     private fun processCommand(input: String) {
@@ -41,8 +40,8 @@ class CommandProcessor(
    // private fun printHelp() {
  //       commands.get["help"]
     //}
-   private fun saveToFile() { // сделала приватным
+   /*private fun saveToFile() { // сделала приватным
         collectionManager.saveToFile()
         println("Data saved to $fileName")
-    }
+    }*/
 }
