@@ -8,10 +8,6 @@ class RemoveByIdCommand : Command (
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
         val id = args[0].toInt()
-        if(collectionManager.getById(id) === null ) {
-            println("This element already not exists.")
-            return
-        }
         collectionManager.delete(id)
     }
 }

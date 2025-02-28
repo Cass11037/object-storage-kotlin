@@ -147,7 +147,13 @@ class CollectionManager(private val filename: String) {
         return vehicles.find { it.id == id }
     }
     fun delete(id: Int) {
-        vehicles.removeAt(id)
+        val vehicleToRemove = vehicles.find { it.id == id }
+        if (vehicleToRemove != null) {
+            vehicles.remove(vehicleToRemove) // Удаляем найденный Vehicle
+            println("Vehicle with id $id removed.")
+        } else {
+            println("Vehicle with id $id not found.")
+        }
     }
     fun size(): Int {
         return vehicles.size
