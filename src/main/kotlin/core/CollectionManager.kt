@@ -146,6 +146,9 @@ class CollectionManager(private val filename: String) {
     fun getById(id: Int): Vehicle? {
         return vehicles.find { it.id == id }
     }
+    fun delete(id: Int) {
+        vehicles.removeAt(id)
+    }
     fun size(): Int {
         return vehicles.size
     }

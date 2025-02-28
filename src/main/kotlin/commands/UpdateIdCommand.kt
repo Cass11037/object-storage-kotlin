@@ -9,7 +9,7 @@ import org.example.model.VehicleType
 
 class UpdateIdCommand : Command (
     name = "update_id",
-    description = "Update the element value by id. You can change: name, coordinates, enginePower, distanceTravelled, type, fuelType. Example: >update 1 name Tesla"
+    description = "Update the element value by id. You can change: name, coordinates, enginePower, distanceTravelled, type, fuelType. Example: >update_id 1 name Tesla"
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
         val id = args[0].toInt()
