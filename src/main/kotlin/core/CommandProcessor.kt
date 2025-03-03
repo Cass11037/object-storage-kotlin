@@ -36,12 +36,4 @@ class CommandProcessor(
             println("Error executing command: ${e.message}")
         }
     }
-
-   // private fun printHelp() {
- //       commands.get["help"]
-    //}
-   /*private fun saveToFile() { // сделала приватным
-        collectionManager.saveToFile()
-        println("Data saved to $fileName")
-    }*/
 }
