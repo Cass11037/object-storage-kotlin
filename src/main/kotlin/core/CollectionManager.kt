@@ -190,6 +190,41 @@ class CollectionManager(private val filename: String) {
     fun getMin(): Vehicle? {
         return vehicles.minOrNull()
     }
+    fun getMin(characteristic: String): Vehicle? {
+
+        return if(this.isEmpty()) {
+            null
+        } else {
+            when (characteristic) {
+                "id" -> vehicles.minBy { it.id }
+                "name" -> vehicles.minBy { it.name }
+                "coordinates" -> vehicles.minBy { it.coordinates.toString() }
+                "enginePower" -> vehicles.minBy { it.enginePower }
+                "distanceTravelled" -> vehicles.minBy { it.distanceTravelled ?: Double.MAX_VALUE }
+                "type" -> vehicles.minBy { it.type?.name ?: "" }
+                "fuelType" -> vehicles.minBy { it.fuelType?.name ?: "" }
+                else -> throw IllegalArgumentException("Unknown characteristic: $characteristic")
+            }
+        }
+
+    }
+    fun getMax(characteristic: String): Vehicle? {
+
+        return if(this.isEmpty()) {
+            null
+        } else {
+            when (characteristic) {
+                "id" -> vehicles.maxBy { it.id }
+                "name" -> vehicles.maxBy { it.name }
+                "coordinates" -> vehicles.maxBy { it.coordinates.toString() }
+                "enginePower" -> vehicles.maxBy { it.enginePower }
+                "distanceTravelled" -> vehicles.maxBy { it.distanceTravelled ?: Double.MAX_VALUE }
+                "type" -> vehicles.maxBy { it.type?.name ?: "" }
+                "fuelType" -> vehicles.maxBy { it.fuelType?.name ?: "" }
+                else -> throw IllegalArgumentException("Unknown characteristic: $characteristic")
+            }
+        }
+    }
     fun findByCharacteristic(characteristic: String, arg: String) : Vehicle? {
         return when (characteristic) {
             "id" -> vehicles.find { it.id == arg.toInt() }
