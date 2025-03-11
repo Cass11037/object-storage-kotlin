@@ -11,7 +11,8 @@ class HelpCommand(private val commands: Map<String, CommandInterface>)  : Comman
         commands.forEach{
             command -> println("${command.key} - ${command.value.getDescription()}")
         }
-        println("execute_script <filename>: Выполняет скрипт из файла")
+        println("execute_script <filename>: executes a script from a file.")
+        println("exit : Exits the program without saving.")
     }
 
 

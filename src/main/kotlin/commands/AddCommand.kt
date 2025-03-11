@@ -9,7 +9,6 @@ class AddCommand(
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
         val vehicle = reader.readVehicle()
         collectionManager.addVehicle(vehicle)
-        //TODO fix wrong id
         println("Vehicle added with ID: ${vehicle.id}")
     }
 }

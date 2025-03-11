@@ -7,7 +7,7 @@ class ShowCommand : Command(
     description = "Display all the items in the collection."
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
-        if(collectionManager.getAll().isEmpty()) {
+        if(collectionManager.isEmpty()) {
             println("Collection is empty.")
         } else {
             collectionManager.getAll().forEach {
