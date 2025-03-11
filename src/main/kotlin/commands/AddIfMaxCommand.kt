@@ -10,8 +10,8 @@ class AddIfMaxCommand (  private val reader: VehicleReader) : Command (
     description = "Add a new item to a collection if its value exceeds the value of the largest item in that collection."
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
-        var newVehicle = reader.readVehicle()
-        var maxVehicle = collectionManager.getMax()
+        val newVehicle = reader.readVehicle()
+        val maxVehicle = collectionManager.getMax()
         if(maxVehicle == null || maxVehicle < newVehicle) {
             collectionManager.addVehicle(newVehicle)
             println("Vehicle added with ID: ${newVehicle.id}")

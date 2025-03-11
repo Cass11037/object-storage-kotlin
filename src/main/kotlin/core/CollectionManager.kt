@@ -150,25 +150,18 @@ class CollectionManager(private val filename: String) {
         val vehicleToRemove = vehicles.find { it.id == id }
         if (vehicleToRemove != null) {
             vehicles.remove(vehicleToRemove) // Удаляем найденный Vehicle
-            println("Vehicle with id $id removed.")
-        } else {
-            println("Vehicle with id $id not found.")
         }
     }
     fun deleteElement(vehicle: Vehicle) {
         if (vehicles.contains(vehicle)) {
             vehicles.remove(vehicle) // Удаляем найденный Vehicle
-            println("Vehicle $vehicle removed.")
-        } else {
-            println("Vehicle $vehicle not found.")
         }
     }
     fun deleteByNumber(number: Int) {
         if(this.isEmpty() || this.size() - 1 < number) {
-            println("Vehicle with id $number not found. Collection is too small.")
+            return
         } else {
             vehicles.removeAt(number)
-            println("Vehicle with number $number was deleted.")
         }
     }
     fun size(): Int {
