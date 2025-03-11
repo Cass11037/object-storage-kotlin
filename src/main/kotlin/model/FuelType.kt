@@ -5,5 +5,10 @@ enum class FuelType (val type: String) {
     DIESEL("diesel"),
     ALCOHOL("alcohol"),
     MANPOWER("manpower"),
-    NUCLEAR("nuclear")
+    NUCLEAR("nuclear");
+    companion object {
+        fun fromString(type: String): FuelType? {
+            return FuelType.entries.find { it.type == type }
+        }
+    }
 }

@@ -4,9 +4,38 @@ import org.example.model.*
 import java.util.Scanner
 
 class VehicleReader(private val scanner: Scanner) {
+    private val validInputs = listOf("name", "coordinates", "enginePower", "distanceTravelled", "type", "fuelType")
+    companion object {
+        private var nextId = 1 // Общая переменная для всех экземпляров
+        fun clearId () {
+            nextId = 1
+        }
+    }
+    fun readUpdatesForVehicle(vehicle: Vehicle) {
+        println("You can change: ${validInputs.joinToString(", ")}." )
+        println("What do you want to change? > ")
+        val input = scanner.nextLine()
+        if (input in validInputs) {
+            try {
+                when (input) {
+                    "name" -> vehicle.name = readNonEmptyString("Название транспортного средства")
+                    "coordinates" -> vehicle.coordinates = readCoordinates()
+                    "enginePower" -> vehicle.enginePower = readPositiveDouble("Мощность двигателя")
+                    "distanceTravelled" -> vehicle.distanceTravelled = readOptionalDouble("Пройденная дистанция")
+                    "type" -> vehicle.type = readEnum("Тип транспорта", VehicleType::class.java)
+                    "fuelType" -> readEnum("Тип топлива", FuelType::class.java)
+                }
+            } catch (e: Exception) {
+                println("Ошибка ввода: ${e.message}. Пожалуйста, попробуйте снова.")
+            }
+        } else {
+            println("Неверный ввод. Пожалуйста, введите одну из следующих команд: ${validInputs.joinToString(", ")}.")
+        }
+        //TODO(if not correct input)
+    }
     fun readVehicle(): Vehicle {
         return Vehicle(
-            id = 0,  // Временное значение
+            id = nextId++,  // Временное значение
             name = readNonEmptyString("Название транспортного средства"),
             coordinates = readCoordinates(),
             creationDate = System.currentTimeMillis(),

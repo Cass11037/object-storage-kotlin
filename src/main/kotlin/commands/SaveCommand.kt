@@ -7,6 +7,7 @@ class SaveCommand : Command (
     description = "Save the collection to a file."
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
-
+        collectionManager.saveToFile()
+        println("Data saved to your file.")
     }
 }

@@ -2,11 +2,12 @@ package org.example.commands
 
 import org.example.core.CollectionManager
 
-class ExecuteScriptFileName :Command (
-    name = "execute_script",
-    description = ""
+class RemoveFirstCommand : Command (
+    name = "remove_first",
+    description = "Delete a first item in collection."
 ){
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
-        TODO("Not yet implemented")
+        collectionManager.deleteByNumber(0)
     }
+
 }
