@@ -57,7 +57,7 @@ class CollectionManager(private val filename: String) {
                     }
                 }
             }
-            if (errors.isNotEmpty()) errors else warnings
+            errors.ifEmpty { warnings }
         } catch (e: Exception) {
             errors.add("Критическая ошибка: ${e.message}")
             errors

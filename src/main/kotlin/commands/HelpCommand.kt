@@ -7,10 +7,11 @@ class HelpCommand(private val commands: Map<String, CommandInterface>)  : Comman
     description = "Display a list of all available commands."
 ){
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
-        println("Доступные команды:")
+        println("Available Commands:")
         commands.forEach{
             command -> println("${command.key} - ${command.value.getDescription()}")
         }
+        println("execute_script <filename>: Выполняет скрипт из файла")
     }
 
 
