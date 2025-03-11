@@ -8,6 +8,7 @@ class RemoveFirstCommand : Command (
 ){
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
         collectionManager.deleteByNumber(0)
+        println("First element removed.")
     }
 
 }
