@@ -146,13 +146,21 @@ class CollectionManager(private val filename: String) {
     fun getById(id: Int): Vehicle? {
         return vehicles.find { it.id == id }
     }
-    fun deleteBuId(id: Int) {
+    fun deleteElement(id: Int) {
         val vehicleToRemove = vehicles.find { it.id == id }
         if (vehicleToRemove != null) {
             vehicles.remove(vehicleToRemove) // Удаляем найденный Vehicle
             println("Vehicle with id $id removed.")
         } else {
             println("Vehicle with id $id not found.")
+        }
+    }
+    fun deleteElement(vehicle: Vehicle) {
+        if (vehicles.contains(vehicle)) {
+            vehicles.remove(vehicle) // Удаляем найденный Vehicle
+            println("Vehicle $vehicle removed.")
+        } else {
+            println("Vehicle $vehicle not found.")
         }
     }
     fun deleteByNumber(number: Int) {
@@ -182,6 +190,17 @@ class CollectionManager(private val filename: String) {
     fun getMin(): Vehicle? {
         return vehicles.minOrNull()
     }
-
+    fun findByCharacteristic(characteristic: String, arg: String) : Vehicle? {
+        return when (characteristic) {
+            "id" -> vehicles.find { it.id == arg.toInt() }
+            "name" -> vehicles.find { it.name == arg }
+            "coordinates" -> vehicles.find { it.coordinates.toString() == arg }
+            "enginePower" -> vehicles.find { it.enginePower == arg.toDouble() }
+            "distanceTravelled" -> vehicles.find { it.distanceTravelled == arg.toDoubleOrNull() }
+            "type" -> vehicles.find { it.type?.name.equals(arg, ignoreCase = true) }
+            "fuelType" -> vehicles.find { it.fuelType?.name.equals(arg, ignoreCase = true) }
+            else -> throw IllegalArgumentException("Unknown characteristic: $characteristic")
+        }
+    }
     fun getAll() = vehicles.toList()
 }

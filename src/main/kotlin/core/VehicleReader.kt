@@ -4,7 +4,7 @@ import org.example.model.*
 import java.util.Scanner
 
 class VehicleReader(private val scanner: Scanner) {
-    val validInputs = listOf("name", "coordinates", "enginePower", "distanceTravelled", "type", "fuelType")
+    private val validInputs = listOf("name", "coordinates", "enginePower", "distanceTravelled", "type", "fuelType")
     companion object {
         private var nextId = 1 // Общая переменная для всех экземпляров
         fun clearId () {
