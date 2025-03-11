@@ -176,6 +176,12 @@ class CollectionManager(private val filename: String) {
         VehicleReader.clearId()
         //saveToFile() должен очищаться не файл, а введенные пользователем данные?
     }
+    fun getMax(): Vehicle? {
+        return vehicles.maxOrNull()
+    }
+    fun getMin(): Vehicle? {
+        return vehicles.minOrNull()
+    }
 
     fun getAll() = vehicles.toList()
 }
