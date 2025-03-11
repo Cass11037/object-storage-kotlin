@@ -202,5 +202,17 @@ class CollectionManager(private val filename: String) {
             else -> throw IllegalArgumentException("Unknown characteristic: $characteristic")
         }
     }
+    fun filterByCharacteristic(characteristic: String, arg: String): List<Vehicle> {
+        return when (characteristic) {
+            "id" -> vehicles.filter { it.id == arg.toInt() }
+            "name" -> vehicles.filter { it.name == arg }
+            "coordinates" -> vehicles.filter { it.coordinates.toString() == arg }
+            "enginePower" -> vehicles.filter { it.enginePower == arg.toDouble() }
+            "distanceTravelled" -> vehicles.filter { it.distanceTravelled == arg.toDoubleOrNull() }
+            "type" -> vehicles.filter { it.type?.name.equals(arg, ignoreCase = true) }
+            "fuelType" -> vehicles.filter { it.fuelType?.name.equals(arg, ignoreCase = true) }
+            else -> throw IllegalArgumentException("Unknown characteristic: $characteristic")
+        }
+    }
     fun getAll() = vehicles.toList()
 }
