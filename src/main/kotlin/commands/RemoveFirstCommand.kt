@@ -2,7 +2,7 @@ package org.example.commands
 
 import org.example.core.CollectionManager
 
-class RemoveFirst : Command (
+class RemoveFirstCommand : Command (
     name = "remove_first",
     description = "Delete a first item in collection."
 ){
