@@ -146,7 +146,7 @@ class CollectionManager(private val filename: String) {
     fun getById(id: Int): Vehicle? {
         return vehicles.find { it.id == id }
     }
-    fun delete(id: Int) {
+    fun deleteBuId(id: Int) {
         val vehicleToRemove = vehicles.find { it.id == id }
         if (vehicleToRemove != null) {
             vehicles.remove(vehicleToRemove) // Удаляем найденный Vehicle
@@ -155,8 +155,19 @@ class CollectionManager(private val filename: String) {
             println("Vehicle with id $id not found.")
         }
     }
+    fun deleteByNumber(number: Int) {
+        if(this.isEmpty() || this.size() - 1 < number) {
+            println("Vehicle with id $number not found. Collection is too small.")
+        } else {
+            vehicles.removeAt(number)
+            println("Vehicle with number $number was deleted.")
+        }
+    }
     fun size(): Int {
         return vehicles.size
+    }
+    fun isEmpty(): Boolean {
+        return vehicles.isEmpty()
     }
 
     fun clear() {

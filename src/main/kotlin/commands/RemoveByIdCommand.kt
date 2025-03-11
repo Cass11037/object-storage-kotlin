@@ -8,7 +8,7 @@ class RemoveByIdCommand : Command (
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
         val id = args[0].toInt()
-        collectionManager.delete(id)
+        collectionManager.deleteBuId(id)
 
     }
 }
