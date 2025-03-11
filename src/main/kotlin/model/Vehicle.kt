@@ -24,4 +24,16 @@ data class Vehicle(
         if (idComparison != 0) return idComparison
         return this.name.compareTo(other.name)
     }
+    override fun toString(): String {
+        return "Vehicle(id=$id, name='$name', coordinates=$coordinates, creationDate=$creationDate, " +
+                "enginePower=$enginePower, distanceTravelled=$distanceTravelled, type=$type, fuelType=$fuelType)"
+    }
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true // Проверка на ссылочное равенство
+        if (other !is Vehicle) return false // Проверка на тип
+        return this.id == other.id // Сравнение по id
+    }
+    override fun hashCode(): Int {
+        return id.hashCode() // Хэш-код на основе id
+    }
 }
