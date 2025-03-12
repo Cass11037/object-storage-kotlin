@@ -4,7 +4,8 @@ import org.example.core.CollectionManager
 
 class RemoveFirstCommand : Command (
     name = "remove_first",
-    description = "Delete a first item in collection."
+    description = "Delete a first item in collection.",
+    size = 0
 ){
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
         if(collectionManager.isEmpty()) {

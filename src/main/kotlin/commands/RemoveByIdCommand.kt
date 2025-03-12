@@ -4,7 +4,8 @@ import org.example.core.CollectionManager
 
 class RemoveByIdCommand : Command (
     name = "remove_by_id",
-    description = "Delete an item from the collection by its id."
+    description = "Delete an item from the collection by its id.",
+    size = 1
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
         val id = args[0].toInt()

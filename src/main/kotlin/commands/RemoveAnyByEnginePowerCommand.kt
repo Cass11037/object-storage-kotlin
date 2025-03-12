@@ -4,7 +4,8 @@ import org.example.core.CollectionManager
 
 class RemoveAnyByEnginePowerCommand : RemoveAnyByCharacteristicCommand(
     name = "remove_any_by_engine_power",
-    description = "Remove one element whose enginePower matches the specified value."
+    description = "Remove one element whose enginePower matches the specified value.",
+    size = 1
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
         if (args.isEmpty()) {
