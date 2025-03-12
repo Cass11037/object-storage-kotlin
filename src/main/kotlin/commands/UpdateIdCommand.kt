@@ -2,19 +2,21 @@ package org.example.commands
 
 import org.example.core.CollectionManager
 import org.example.core.VehicleReader
-import org.example.model.Coordinates
-import org.example.model.FuelType
 import org.example.model.Vehicle
-import org.example.model.VehicleType
 
 
 class UpdateIdCommand (
     private val reader: VehicleReader
 ) : Command (
     name = "update_id",
-    description = "Update the element value by id."
+    description = "Update the element value by id.",
+    size = 1
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
+        if(!checkSizeOfArgs(args.size)) {
+            println("Error: Args can be size ${args.size}.")
+            return
+        }
         val id = args[0].toInt()
         val vehicle: Vehicle? = collectionManager.getById(id)
         if (vehicle == null) {

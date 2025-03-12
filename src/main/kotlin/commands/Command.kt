@@ -1,10 +1,13 @@
 package org.example.commands
-import org.example.core.CollectionManager
 
 abstract class Command  (
     private val name: String,
-    private val description: String
+    private val description: String,
+    private val size: Int
 ) : CommandInterface {
     override fun getName(): String = name
     override fun getDescription(): String = description
+    fun checkSizeOfArgs(argsSize: Int) : Boolean {
+        return argsSize == size
+    }
 }

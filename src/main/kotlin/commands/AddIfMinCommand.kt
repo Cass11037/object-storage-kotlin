@@ -5,9 +5,14 @@ import org.example.core.VehicleReader
 
 class AddIfMinCommand (  private val reader: VehicleReader) : Command (
     name = "add_if_min",
-    description = "Add a new item to the collection if its value is less than that of the smallest item in this collection."
+    description = "Add a new item to the collection if its value is less than that of the smallest item in this collection.",
+    size = 0
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
+        if(!checkSizeOfArgs(args.size)) {
+            println("Error: Args can be size ${args.size}.")
+            return
+        }
         val newVehicle = reader.readVehicle()
         val minVehicle = collectionManager.getMin()
         if(minVehicle == null || minVehicle > newVehicle) {

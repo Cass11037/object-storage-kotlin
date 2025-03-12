@@ -4,9 +4,14 @@ import org.example.core.CollectionManager
 
 class RemoveFirstCommand : Command (
     name = "remove_first",
-    description = "Delete a first item in collection."
+    description = "Delete a first item in collection.",
+    size = 0
 ){
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
+        if(!checkSizeOfArgs(args.size)) {
+            println("Error: Args can be size ${args.size}.")
+            return
+        }
         if(collectionManager.isEmpty()) {
             println("No element in the collection.")
             return

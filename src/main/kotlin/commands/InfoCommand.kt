@@ -8,9 +8,14 @@ import java.time.format.DateTimeFormatter
 
 class InfoCommand :Command(
     name = "info",
-    description = "Выводит информацию о проекте."
+    description = "Выводит информацию о проекте.",
+    size = 0
 ){
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
+        if(!checkSizeOfArgs(args.size)) {
+            println("Error: Args can be size ${args.size}.")
+            return
+        }
         println("Информация:")
         println("Тип коллекции: ${collectionManager.getAll()::class.simpleName}")
         println("Количество элементов: ${collectionManager.size()}")
