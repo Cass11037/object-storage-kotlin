@@ -3,6 +3,7 @@ plugins {
     application
     kotlin("plugin.serialization") version "1.9.0"
     id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("org.jetbrains.dokka") version "2.0.0"
 }
 
 group = "org.example"
@@ -13,9 +14,10 @@ repositories {
 }
 
 dependencies {
+    implementation(kotlin("stdlib"))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
-    testImplementation("io.mockk:mockk:1.13.5")
+    implementation("io.mockk:mockk:1.13.5")
     implementation("org.apache.commons:commons-csv:1.10.0")
 }
 
