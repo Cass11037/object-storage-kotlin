@@ -2,6 +2,7 @@ package org.example.commands
 
 import org.example.core.CollectionManager
 import org.example.core.VehicleReader
+import io.mockk.*
 
 class AddCommand(
     private val reader: VehicleReader
