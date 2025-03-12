@@ -130,7 +130,7 @@ class AppTest {
         System.out.flush()
         System.setOut(originalOut)
         val output = baos.toString()
-        assertTrue(output.contains("Коллекция пуста"))
+        assertTrue(output.contains("Collection is empty"))
     }
 
     //8. Тест фильтрации по мощности двигателя
