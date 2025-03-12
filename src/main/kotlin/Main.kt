@@ -1,6 +1,11 @@
 package org.example
 
-/*fun fileReader(scanner: Scanner) : String {
+import org.example.core.*
+import org.example.commands.*
+import java.io.File
+import java.util.*
+
+fun fileReader(scanner: Scanner) : String {
     var fileName: String
     while (true) {
         println("Введите название файла, в котором будете работать: ")
@@ -23,34 +28,45 @@ package org.example
         }
     }
     return fileName
-}*/
-/*fun tempTest() {
+}
+
+fun main() {
     val scanner = Scanner(System.`in`)
     val fileName = fileReader(scanner)
     val vehicleReader = VehicleReader(scanner)
     val commands = listOf(
         AddCommand(vehicleReader),
+        AddIfMaxCommand(vehicleReader),
+        AddIfMinCommand(vehicleReader),
         ClearCommand(),
+        FilterByEnginePowerCommand(),
         HelpCommand(emptyMap()),
         InfoCommand(),
-        ShowCommand(),
+        MinByNameCommand(),
+        RemoveAnyByEnginePowerCommand(),
         RemoveByIdCommand(),
+        RemoveFirstCommand(),
+        ShowCommand(),
         SaveCommand(),
-        UpdateIdCommand(vehicleReader)
+        UpdateIdCommand(vehicleReader),
+
     ).associateBy { it.getName() }
     val help = HelpCommand(commands)
     val allCommands = listOf(
         help,
         AddCommand(vehicleReader),
+        AddIfMaxCommand(vehicleReader),
+        AddIfMinCommand(vehicleReader),
         ClearCommand(),
+        FilterByEnginePowerCommand(),
         InfoCommand(),
-        ShowCommand(),
+        MinByNameCommand(),
+        RemoveAnyByEnginePowerCommand(),
         RemoveByIdCommand(),
+        RemoveFirstCommand(),
+        ShowCommand(),
         SaveCommand(),
-        UpdateIdCommand(vehicleReader)
+        UpdateIdCommand(vehicleReader),
     ).associateBy { it.getName() }
     CommandProcessor(allCommands, scanner, fileName).start()
-}*/
-fun main() {
-
 }

@@ -36,7 +36,7 @@ application {
 
 tasks {
     shadowJar {
-        archiveBaseName.set("your-app")
+        archiveBaseName.set("object-kotlin-storage")
         archiveVersion.set("1.0")
         archiveClassifier.set("")
         manifest {
