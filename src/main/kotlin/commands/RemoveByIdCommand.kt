@@ -8,6 +8,10 @@ class RemoveByIdCommand : Command (
     size = 1
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
+        if(!checkSizeOfArgs(args.size)) {
+            println("Error: Args can be size ${args.size}.")
+            return
+        }
         val id = args[0].toInt()
         if(collectionManager.getById(id) == null) {
             println("No element with $id.")

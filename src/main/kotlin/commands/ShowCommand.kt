@@ -8,6 +8,10 @@ class ShowCommand : Command(
     size = 0
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
+        if(!checkSizeOfArgs(args.size)) {
+            println("Error: Args can be size ${args.size}.")
+            return
+        }
         if(collectionManager.isEmpty()) {
             println("Collection is empty.")
         } else {

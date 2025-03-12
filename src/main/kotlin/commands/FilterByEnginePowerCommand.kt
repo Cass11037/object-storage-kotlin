@@ -8,8 +8,8 @@ class FilterByEnginePowerCommand :  FilterByCharacteristicCommand (
     size = 1
 ){
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
-        if (args.isEmpty()) {
-            println("Error: Engine power value not specified.")
+        if(!checkSizeOfArgs(args.size)) {
+            println("Error: Args can be size ${args.size}.")
             return
         }
         super.execute(listOf("enginePower", args[0]), collectionManager)

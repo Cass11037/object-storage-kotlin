@@ -13,6 +13,10 @@ class UpdateIdCommand (
     size = 1
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
+        if(!checkSizeOfArgs(args.size)) {
+            println("Error: Args can be size ${args.size}.")
+            return
+        }
         val id = args[0].toInt()
         val vehicle: Vehicle? = collectionManager.getById(id)
         if (vehicle == null) {
