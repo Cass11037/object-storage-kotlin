@@ -8,7 +8,8 @@ import java.time.format.DateTimeFormatter
 
 class InfoCommand :Command(
     name = "info",
-    description = "Выводит информацию о проекте."
+    description = "Выводит информацию о проекте.",
+    size = 0
 ){
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
         println("Информация:")

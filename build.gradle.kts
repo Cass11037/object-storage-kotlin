@@ -14,9 +14,11 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
-    testImplementation("io.mockk:mockk:1.13.5")
+    implementation("org.junit.jupiter:junit-jupiter:5.9.2")
+    implementation("io.mockk:mockk:1.13.5")
     implementation("org.apache.commons:commons-csv:1.10.0")
+    implementation(kotlin("test"))
+    implementation("ch.qos.logback:logback-classic:1.4.12")
 }
 
 tasks.test {

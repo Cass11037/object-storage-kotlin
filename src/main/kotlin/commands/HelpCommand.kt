@@ -4,7 +4,8 @@ import org.example.core.CollectionManager
 
 class HelpCommand(private val commands: Map<String, CommandInterface>)  : Command (
     name = "help",
-    description = "Display a list of all available commands."
+    description = "Display a list of all available commands.",
+    size = 0
 ){
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
         println("Available Commands:")

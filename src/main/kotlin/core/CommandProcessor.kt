@@ -1,8 +1,8 @@
 package org.example.core
 
-import org.example.commands.*
+import org.example.commands.Command
 import java.io.File
-import java.util.Scanner
+import java.util.*
 
 class CommandProcessor(
     private val commands: Map<String, Command>,
