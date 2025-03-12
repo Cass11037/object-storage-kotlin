@@ -5,24 +5,59 @@ import org.example.commands.*
 import java.io.File
 import java.util.*
 
-fun fileReader(scanner: Scanner) : String {
+//теория
+//комментарии
+//отчет
+//
+//файл если ничего не введено то использовать перманентный
+//проверять создание имени файла новго через регех
+//Написать скрипт который будет создавать 10 объектов
+//чето с сортировкой
+//сейв в файл если без арг то в перма
+//сейв уточнять в какой файл
+//опять сделать loadfromfile
+//и исправить id из-за этого
+//
+//сделать нормальный мейн
+
+
+
+fun fileReader(scanner: Scanner): String {
     var fileName: String
+    val regex = "^[\\w\\-]+\\.csv$".toRegex()
     while (true) {
         println("Enter file name: ")
         print("> ")
         fileName = scanner.nextLine().trim()
-        val file = File(fileName)
-        if (!fileName.endsWith(".csv")) {
-            println("File type must be csv and end in .csv")
-            continue;
+        val permaFile = File("Collection.csv")
+        if(fileName==""){
+            return "Collection.csv"
+            else
         }
-        if(file.exists()) {
+
+        if (!regex.matches(fileName)) {
+            println("Invalid file name. The file name must contain only letters, digits, underscores, or hyphens and end with '.csv'.")
+            continue
+        }
+
+        val file = File(fileName)
+        val permaFile = File("Collection.csv")
+        if (fileName.isEmpty() || fileName == ".csv") {
+            if (!permaFile.exists()) {
+                permaFile.createNewFile()
+            }
+            return "Collection.csv"
+        } else if (!fileName.endsWith(".csv")) {
+            println("File type must be csv and end in .csv")
+            continue
+        }
+        if (file.exists()) {
             println("File '$fileName' already exists.")
         } else {
-            if(file.createNewFile()) {
+            if (file.createNewFile()) {
                 println("File '$fileName' created successfully.")
-                break;
-            }else {
+                break
+            } else {
                 println("Unable to create file '$fileName'.")
             }
         }
@@ -50,7 +85,7 @@ fun main() {
         SaveCommand(),
         UpdateIdCommand(vehicleReader),
 
-    ).associateBy { it.getName() }
+        ).associateBy { it.getName() }
     val help = HelpCommand(commands)
     val allCommands = listOf(
         help,
