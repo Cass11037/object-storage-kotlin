@@ -8,7 +8,8 @@ abstract class FilterByCharacteristicCommand (
     size: Int) : Command (
     name = name,
     description = description,
-        size = size
+    size = size
+
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
         val vehicles = collectionManager.filterByCharacteristic(args[0], args[1])

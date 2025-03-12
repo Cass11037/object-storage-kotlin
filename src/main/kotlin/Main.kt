@@ -1,12 +1,6 @@
 package org.example
 
-import org.example.commands.*
-import org.example.core.CommandProcessor
-import org.example.core.VehicleReader
-import java.io.File
-import java.util.*
-
-fun fileReader(scanner: Scanner) : String {
+/*fun fileReader(scanner: Scanner) : String {
     var fileName: String
     while (true) {
         println("Введите название файла, в котором будете работать: ")
@@ -29,8 +23,8 @@ fun fileReader(scanner: Scanner) : String {
         }
     }
     return fileName
-}
-fun main() {
+}*/
+/*fun tempTest() {
     val scanner = Scanner(System.`in`)
     val fileName = fileReader(scanner)
     val vehicleReader = VehicleReader(scanner)
@@ -56,4 +50,7 @@ fun main() {
         UpdateIdCommand(vehicleReader)
     ).associateBy { it.getName() }
     CommandProcessor(allCommands, scanner, fileName).start()
+}*/
+fun main() {
+
 }

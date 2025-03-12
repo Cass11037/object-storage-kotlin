@@ -10,6 +10,7 @@ class AddCommand(
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
         if(!checkSizeOfArgs(args.size)) {
             println("Error: Args can be size ${args.size}.")
+
             return
         }
         val vehicle = reader.readVehicle()

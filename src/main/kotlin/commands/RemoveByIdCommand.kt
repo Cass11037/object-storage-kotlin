@@ -18,6 +18,6 @@ class RemoveByIdCommand : Command (
             return
         }
         collectionManager.deleteElement(id)
-        println("Element with $id removed.")
+        println("Eleme  nt with $id removed.")
     }
 }
