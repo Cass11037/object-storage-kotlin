@@ -8,22 +8,22 @@ import java.util.*
 fun fileReader(scanner: Scanner) : String {
     var fileName: String
     while (true) {
-        println("Введите название файла, в котором будете работать: ")
+        println("Enter file name: ")
         print("> ")
         fileName = scanner.nextLine().trim()
         val file = File(fileName)
         if (!fileName.endsWith(".csv")) {
-            println("Файл должен иметь расширение .csv")
+            println("File type must be csv and end in .csv")
             continue;
         }
         if(file.exists()) {
-            println("Файл '$fileName' уже существует.")
+            println("File '$fileName' already exists.")
         } else {
             if(file.createNewFile()) {
-                println("Файл '$fileName' успешно создан.")
+                println("File '$fileName' created successfully.")
                 break;
             }else {
-                println("Не удалось создать файл '$fileName'.")
+                println("Unable to create file '$fileName'.")
             }
         }
     }
