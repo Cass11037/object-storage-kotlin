@@ -31,7 +31,6 @@ class VehicleReader(private val scanner: Scanner) {
         } else {
             println("Неверный ввод. Пожалуйста, введите одну из следующих команд: ${validInputs.joinToString(", ")}.")
         }
-        //TODO(if not correct input)
     }
     fun readVehicle(): Vehicle {
         return Vehicle(
@@ -115,7 +114,6 @@ class VehicleReader(private val scanner: Scanner) {
             }
         }
     }
-    //TODO simplify
     private inline fun <reified T : Enum<T>> readEnum(prompt: String, enumClass: Class<T>): T? {
         val values = enumClass.enumConstants.joinToString { it.name }
         println("$prompt (доступные значения: $values)")

@@ -13,7 +13,6 @@ class CollectionManager(private val filename: String) {
         loadFromFile()
         lastId = vehicles.maxOfOrNull { it.id } ?: 0
     }
-    //TODO delete all about lastId and reading from the file
     private fun loadFromFile(): List<String> {
         val warnings = mutableListOf<String>()
         val errors = mutableListOf<String>()
