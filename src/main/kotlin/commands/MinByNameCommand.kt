@@ -8,6 +8,10 @@ class MinByNameCommand : MinByCharacteristicCommand (
     size = 0
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
+        if(!checkSizeOfArgs(args.size)) {
+            println("Error: Args can be size ${args.size}.")
+            return
+        }
         super.execute(listOf("name"), collectionManager)
     }
 }

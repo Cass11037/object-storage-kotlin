@@ -8,6 +8,10 @@ class RemoveAnyByEnginePowerCommand : RemoveAnyByCharacteristicCommand(
     size = 1
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
+        if(!checkSizeOfArgs(args.size)) {
+            println("Error: Args can be size ${args.size}.")
+            return
+        }
         if (args.isEmpty()) {
             println("Error: Engine power value not specified.")
             return

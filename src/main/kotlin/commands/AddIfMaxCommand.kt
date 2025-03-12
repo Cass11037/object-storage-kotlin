@@ -9,6 +9,10 @@ class AddIfMaxCommand (  private val reader: VehicleReader) : Command (
     size = 0
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
+        if(!checkSizeOfArgs(args.size)) {
+            println("Error: Args can be size ${args.size}.")
+            return
+        }
         val newVehicle = reader.readVehicle()
         val maxVehicle = collectionManager.getMax()
         if(maxVehicle == null || maxVehicle < newVehicle) {

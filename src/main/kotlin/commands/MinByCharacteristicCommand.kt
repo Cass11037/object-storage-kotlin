@@ -9,7 +9,8 @@ abstract class MinByCharacteristicCommand (
 ) : Command(
     name = name,
     description = description,
-    size = size
+
+    size = 1
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
         if (args.isEmpty() || args.size != 1) {
