@@ -12,6 +12,7 @@ abstract class FilterByCharacteristicCommand (
 
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
+        checkSizeOfArgs(args.size, 2)
         val vehicles = collectionManager.filterByCharacteristic(args[0], args[1])
         if(vehicles.isEmpty())  {
             println("No vehicles found with $args[0] = $args[1]")

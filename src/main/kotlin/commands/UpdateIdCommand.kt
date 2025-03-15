@@ -13,17 +13,21 @@ class UpdateIdCommand (
     size = 1
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
-        if(!checkSizeOfArgs(args.size)) {
-            println("Error: Args can be size ${args.size}.")
-            return
+        try {
+            if (!checkSizeOfArgs(args.size)) {
+                println("Error: Args can be size ${args.size}.")
+                return
+            }
+            val id = args[0].toInt()
+            val vehicle: Vehicle? = collectionManager.getById(id)
+            if (vehicle == null) {
+                println("Can not find vehicle by $id. Your collection\' max id = ${collectionManager.size() - 1}.")
+                return
+            }
+            reader.readUpdatesForVehicle(vehicle)
+            println("Vehicle $id was updated.")
+        } catch(e: NumberFormatException) {
+            println("Error: id must be int.")
         }
-        val id = args[0].toInt()
-        val vehicle: Vehicle? = collectionManager.getById(id)
-        if (vehicle == null) {
-            println("Can not find vehicle by $id. Your collection\' max id = ${collectionManager.size() - 1}.")
-            return
-        }
-        reader.readUpdatesForVehicle(vehicle)
-        println("Vehicle $id was updated.")
     }
 }

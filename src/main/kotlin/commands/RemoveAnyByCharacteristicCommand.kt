@@ -12,6 +12,7 @@ abstract class RemoveAnyByCharacteristicCommand(
     size = size
 ){
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
+        checkSizeOfArgs(args.size, 2)
         if (args.isEmpty() || args.size != 2) {
             println("Error: Args can not be empty.")
             return

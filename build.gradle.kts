@@ -21,6 +21,8 @@ dependencies {
     implementation("org.apache.commons:commons-csv:1.10.0")
     implementation(kotlin("test"))
     implementation("ch.qos.logback:logback-classic:1.4.12")
+    implementation("io.github.microutils:kotlin-logging:3.0.5")
+
 }
 
 tasks.test {

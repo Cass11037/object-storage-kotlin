@@ -11,4 +11,8 @@ abstract class Command  (
         return argsSize == size
 
     }
+
+    override fun checkSizeOfArgs(argsSize: Int, neededSize: Int): Boolean {
+        return argsSize == neededSize
+    }
 }
