@@ -2,6 +2,7 @@ package org.example.commands
 
 import org.example.core.CollectionManager
 import org.example.core.VehicleReader
+import io.mockk.*
 
 class AddCommand(
     private val reader: VehicleReader
@@ -9,6 +10,7 @@ class AddCommand(
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
         if(!checkSizeOfArgs(args.size)) {
             println("Error: Args can be size ${args.size}.")
+
             return
         }
         val vehicle = reader.readVehicle()

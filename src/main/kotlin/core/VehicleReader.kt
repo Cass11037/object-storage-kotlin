@@ -18,38 +18,37 @@ class VehicleReader(private val scanner: Scanner) {
         if (input in validInputs) {
             try {
                 when (input) {
-                    "name" -> vehicle.name = readNonEmptyString("Название транспортного средства")
+                    "name" -> vehicle.name = readNonEmptyString("Vehicle name")
                     "coordinates" -> vehicle.coordinates = readCoordinates()
-                    "enginePower" -> vehicle.enginePower = readPositiveDouble("Мощность двигателя")
-                    "distanceTravelled" -> vehicle.distanceTravelled = readOptionalDouble("Пройденная дистанция")
-                    "type" -> vehicle.type = readEnum("Тип транспорта", VehicleType::class.java)
-                    "fuelType" -> readEnum("Тип топлива", FuelType::class.java)
+                    "enginePower" -> vehicle.enginePower = readPositiveDouble("Engine power")
+                    "distanceTravelled" -> vehicle.distanceTravelled = readOptionalDouble("Distance travelled")
+                    "type" -> vehicle.type = readEnum("Vehicle type", VehicleType::class.java)
+                    "fuelType" -> readEnum("Fuel type", FuelType::class.java)
                 }
             } catch (e: Exception) {
-                println("Ошибка ввода: ${e.message}. Пожалуйста, попробуйте снова.")
+                println("Input error: ${e.message}. Please try again.")
             }
         } else {
-            println("Неверный ввод. Пожалуйста, введите одну из следующих команд: ${validInputs.joinToString(", ")}.")
+            println("Wrong input. Please enter one of these commands: ${validInputs.joinToString(", ")}.")
         }
-        //TODO(if not correct input)
     }
     fun readVehicle(): Vehicle {
         return Vehicle(
             id = nextId++,  // Временное значение
-            name = readNonEmptyString("Название транспортного средства"),
+            name = readNonEmptyString("Vehicle name"),
             coordinates = readCoordinates(),
             creationDate = System.currentTimeMillis(),
-            enginePower = readPositiveDouble("Мощность двигателя"),
-            distanceTravelled = readOptionalDouble("Пройденная дистанция"),
-            type = readEnum("Тип транспорта", VehicleType::class.java),
-            fuelType = readEnum("Тип топлива", FuelType::class.java)
+            enginePower = readPositiveDouble("Engine power"),
+            distanceTravelled = readOptionalDouble("Distance travelled"),
+            type = readEnum("Vehicle type", VehicleType::class.java),
+            fuelType = readEnum("Fuel type", FuelType::class.java)
         )
     }
 
     private fun readCoordinates(): Coordinates {
         return Coordinates(
-            x = readBoundedInt("Координата X", max = 806),
-            y = readBoundedFloat("Координата Y", max = 922f)
+            x = readBoundedInt("Coordinate X", max = 806),
+            y = readBoundedFloat("Coordinate Y", max = 922f)
         )
     }
     private fun readNonEmptyString(prompt: String): String {
@@ -57,7 +56,7 @@ class VehicleReader(private val scanner: Scanner) {
             print("$prompt: ")
             val input = scanner.nextLine().trim()
             if (input.isNotEmpty()) return input
-            println("Поле не может быть пустым!")
+            println("Field cannot be empty!")
         }
     }
 
@@ -68,22 +67,22 @@ class VehicleReader(private val scanner: Scanner) {
             try {
                 val value = input.toInt()
                 if (value in min..max) return value
-                println("Значение должно быть между $min и $max")
+                println("Value must be in range $min to $max")
             } catch (e: NumberFormatException) {
-                println("Некорректное целое число!")
+                println("Wrong INT!")
             }
         }
     }
     private fun readBoundedFloat(prompt: String, max: Float): Float {
         while (true) {
-            print("$prompt (макс. $max): ")
+            print("$prompt (max. $max): ")
             val input = scanner.nextLine()
             try {
                 val value = input.toFloat()
                 if (value <= max) return value
-                println("Значение не должно превышать $max")
+                println("Value must not be higher than $max")
             } catch (e: NumberFormatException) {
-                println("Некорректное число!")
+                println("Incorrect value!")
             }
         }
     }
@@ -94,39 +93,38 @@ class VehicleReader(private val scanner: Scanner) {
             try {
                 val value = input.toDouble()
                 if (value > 0) return value
-                println("Значение должно быть больше 0")
+                println("Value must not be 0")
             } catch (e: NumberFormatException) {
-                println("Некорректное число!")
+                println("Incorrect value!")
             }
         }
     }
     private fun readOptionalDouble(prompt: String): Double? {
-        print("$prompt (оставьте пустым если нет значения): ")
+        print("$prompt (leave empty if no value): ")
         val input = scanner.nextLine().trim()
         return if (input.isEmpty()) {
             null
         } else {
             try {
                 input.toDouble().takeIf { it > 0 }
-                    ?: throw IllegalArgumentException("Значение должно быть положительным")
+                    ?: throw IllegalArgumentException("Value must be positive")
             } catch (e: NumberFormatException) {
-                println("Некорректное число! Поле будет null")
+                println("Wrong value! Filed will equal null")
                 null
             }
         }
     }
-    //TODO simplify
     private inline fun <reified T : Enum<T>> readEnum(prompt: String, enumClass: Class<T>): T? {
         val values = enumClass.enumConstants.joinToString { it.name }
-        println("$prompt (доступные значения: $values)")
+        println("$prompt (available values: $values)")
         while (true) {
-            print("Введите значение (оставьте пустым для отмены): ")
+            print("Input value (leave empty to cancel): ")
             val input = scanner.nextLine().trim()
             if (input.isEmpty()) return null
             try {
                 return enumClass.enumConstants.first { it.name.equals(input, ignoreCase = true) }
             } catch (e: NoSuchElementException) {
-                println("Некорректное значение! Попробуйте снова.")
+                println("Wrong value! Try again!")
             }
         }
     }

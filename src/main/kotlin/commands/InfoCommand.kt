@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter
 
 class InfoCommand :Command(
     name = "info",
-    description = "Выводит информацию о проекте.",
+    description = "Displays project information.",
     size = 0
 ){
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
@@ -16,17 +16,17 @@ class InfoCommand :Command(
             println("Error: Args can be size ${args.size}.")
             return
         }
-        println("Информация:")
-        println("Тип коллекции: ${collectionManager.getAll()::class.simpleName}")
-        println("Количество элементов: ${collectionManager.size()}")
+        println("Info:")
+        println("Collection type: ${collectionManager.getAll()::class.simpleName}")
+        println("Amount of elements: ${collectionManager.size()}")
         if (collectionManager.getAll().isNotEmpty()) {
             val readableDate = Instant.ofEpochMilli(collectionManager.getAll().first().creationDate)
                 .atZone(ZoneId.of("UTC"))
                 .toLocalDateTime()
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-            println("Дата инициализации: $readableDate")
+            println("Creation date: $readableDate")
         } else {
-            println("Коллекция пуста.")
+            println("Collection is empty.")
         }
     }
 }

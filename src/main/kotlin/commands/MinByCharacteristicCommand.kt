@@ -4,10 +4,12 @@ import org.example.core.CollectionManager
 
 abstract class MinByCharacteristicCommand (
     name: String,
-    description: String
+    description: String,
+    size: Int
 ) : Command(
     name = name,
     description = description,
+
     size = 1
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {

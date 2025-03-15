@@ -9,5 +9,6 @@ abstract class Command  (
     override fun getDescription(): String = description
     override fun checkSizeOfArgs(argsSize: Int) : Boolean {
         return argsSize == size
+
     }
 }

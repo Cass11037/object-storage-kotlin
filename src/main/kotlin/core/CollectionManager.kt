@@ -13,7 +13,6 @@ class CollectionManager(private val filename: String) {
         loadFromFile()
         lastId = vehicles.maxOfOrNull { it.id } ?: 0
     }
-    //TODO delete all about lastId and reading from the file
     private fun loadFromFile(): List<String> {
         val warnings = mutableListOf<String>()
         val errors = mutableListOf<String>()
@@ -24,14 +23,14 @@ class CollectionManager(private val filename: String) {
                     vehicles.clear()
                     for ((index, record) in parser.withIndex()) {
                         try {
-                            val id = requireNotNull(record["id"]) { "ID отсутствует" }.toInt()
-                            val name = requireNotNull(record["name"]) { "Имя отсутствует" }
-                            val x = requireNotNull(record["coordinatesX"]) { "Координата X отсутствует" }.toInt()
-                            val y = requireNotNull(record["coordinatesY"]) { "Координата Y отсутствует" }.toFloat()
+                            val id = requireNotNull(record["id"]) { "ID missing" }.toInt()
+                            val name = requireNotNull(record["name"]) { "Name missing" }
+                            val x = requireNotNull(record["coordinatesX"]) { "X coordinate missing" }.toInt()
+                            val y = requireNotNull(record["coordinatesY"]) { "XY coordinate missing" }.toFloat()
                             val creationDate =
-                                requireNotNull(record["creationDate"]) { "Дата создания отсутствует" }.toLong()
+                                requireNotNull(record["creationDate"]) { "Date of creation missing" }.toLong()
                             val enginePower =
-                                requireNotNull(record["enginePower"]) { "Мощность двигателя отсутствует" }.toDouble()
+                                requireNotNull(record["enginePower"]) { "Engine power missing" }.toDouble()
 
                             val distanceTravelled = record["distanceTravelled"]?.takeIf { it.isNotBlank() }?.toDouble()
                             val type = record["type"]?.takeIf { it.isNotBlank() }?.let { VehicleType.valueOf(it) }
@@ -52,14 +51,14 @@ class CollectionManager(private val filename: String) {
                                 )
                             )
                         } catch (e: Exception) {
-                            errors.add("Ошибка в строке ${index + 2}: ${e.message ?: "Неизвестная ошибка"}")
+                            errors.add("Error at ${index + 2}: ${e.message ?: "Unknown error"}")
                         }
                     }
                 }
             }
             errors.ifEmpty { warnings }
         } catch (e: Exception) {
-            errors.add("Критическая ошибка: ${e.message}")
+            errors.add("Critical error: ${e.message}")
             errors
         }
     }
@@ -75,15 +74,15 @@ class CollectionManager(private val filename: String) {
         fuelType: FuelType?,
         warnings: MutableList<String>
     ) {
-        if (name.isBlank()) warnings.add("Ошибка в ID $id: Пустое имя")
-        if (x > 806) warnings.add("Ошибка в ID $id: Координата X > 806")
-        if (y > 922) warnings.add("Ошибка в ID $id: Координата Y > 922")
-        if (enginePower <= 0) warnings.add("Ошибка в ID $id: Мощность двигателя должна быть положительной")
+        if (name.isBlank()) warnings.add("Error at ID $id: Empty name")
+        if (x > 806) warnings.add("Error at ID $id: Coordinate X > 806")
+        if (y > 922) warnings.add("Error at ID $id: Coordinate Y > 922")
+        if (enginePower <= 0) warnings.add("Error at ID $id: Engine power must be positive")
         distanceTravelled?.let {
-            if (it < 0) warnings.add("Ошибка в ID $id: Пройденное расстояние должно быть положительным")
+            if (it < 0) warnings.add("Error at ID $id: Distance travelled must be positive")
         }
-        if (type == null) warnings.add("Предупреждение в ID $id: Тип ТС не указан")
-        if (fuelType == null) warnings.add("Предупреждение в ID $id: Тип топлива не указан")
+        if (type == null) warnings.add("Warning at ID $id: Vehicle type missing")
+        if (fuelType == null) warnings.add("Warning at ID $id: Fuel type missing")
     }
 
     fun saveToFile(): List<String> {
@@ -123,7 +122,7 @@ class CollectionManager(private val filename: String) {
             }
             emptyList()
         } catch (e: IOException) {
-            listOf("Ошибка записи файла: ${e.message}")
+            listOf("Error while saving file: ${e.message}")
         }
     }
 
@@ -175,7 +174,6 @@ class CollectionManager(private val filename: String) {
         vehicles.clear()
         lastId = 1
         VehicleReader.clearId()
-        //saveToFile() должен очищаться не файл, а введенные пользователем данные?
     }
     fun getMax(): Vehicle? {
         return vehicles.maxOrNull()
