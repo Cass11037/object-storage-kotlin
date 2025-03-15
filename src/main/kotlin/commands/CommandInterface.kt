@@ -6,4 +6,5 @@ interface CommandInterface {
     fun getName() : String
     fun getDescription(): String
     fun execute(args: List<String> = emptyList(),collectionManager: CollectionManager)
+    fun checkSizeOfArgs(argsSize: Int) : Boolean
 }

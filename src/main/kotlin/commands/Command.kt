@@ -7,7 +7,7 @@ abstract class Command  (
 ) : CommandInterface {
     override fun getName(): String = name
     override fun getDescription(): String = description
-    fun checkSizeOfArgs(argsSize: Int) : Boolean {
+    override fun checkSizeOfArgs(argsSize: Int) : Boolean {
         return argsSize == size
     }
 }
