@@ -1,14 +1,14 @@
 package org.example.core
 
-import org.example.commands.Command
+import org.example.commands.*
 import java.io.File
 import java.util.*
 
 class CommandProcessor(
-    private val commands: Map<String, Command>,
     private val scanner: Scanner,
     private var fileName: String
 ) {
+    private val commands: Map<String, Command> = loadCommands()
     val collectionManager = CollectionManager(fileName)
     private val executedScripts = mutableSetOf<String>() // protection against recursion & may be a file reading in the file
     fun start() {
@@ -24,7 +24,44 @@ class CommandProcessor(
             }
         }
     }
+    private fun loadCommands(): Map<String, Command> {
+        val vehicleReader = VehicleReader(scanner)
+        val commands = listOf(
+            AddCommand(vehicleReader),
+            AddIfMaxCommand(vehicleReader),
+            AddIfMinCommand(vehicleReader),
+            ClearCommand(),
+            FilterByEnginePowerCommand(),
+            HelpCommand(emptyMap()),
+            InfoCommand(),
+            MinByNameCommand(),
+            RemoveAnyByEnginePowerCommand(),
+            RemoveByIdCommand(),
+            RemoveFirstCommand(),
+            ShowCommand(),
+            SaveCommand(),
+            UpdateIdCommand(vehicleReader),
 
+            ).associateBy { it.getName() }
+        val help = HelpCommand(commands)
+        val allCommands = listOf(
+            help,
+            AddCommand(vehicleReader),
+            AddIfMaxCommand(vehicleReader),
+            AddIfMinCommand(vehicleReader),
+            ClearCommand(),
+            FilterByEnginePowerCommand(),
+            InfoCommand(),
+            MinByNameCommand(),
+            RemoveAnyByEnginePowerCommand(),
+            RemoveByIdCommand(),
+            RemoveFirstCommand(),
+            ShowCommand(),
+            SaveCommand(),
+            UpdateIdCommand(vehicleReader),
+        ).associateBy { it.getName() }
+        return allCommands
+    }
     private fun processCommand(input: String) {
         val parts = input.split("\\s+".toRegex())
         val command = commands[parts[0]] ?: run {
