@@ -5,6 +5,7 @@ import org.example.model.*
 import java.io.*
 import java.util.LinkedList
 
+@Suppress("DEPRECATION")
 class CollectionManager(private val filename: String) {
     private val vehicles: MutableList<Vehicle> = LinkedList()
     private var lastId = 0
@@ -13,77 +14,185 @@ class CollectionManager(private val filename: String) {
         loadFromFile()
         lastId = vehicles.maxOfOrNull { it.id } ?: 0
     }
+
     private fun loadFromFile(): List<String> {
         val warnings = mutableListOf<String>()
         val errors = mutableListOf<String>()
+        val requiredHeaders = listOf(
+            "id", "name", "coordinatesX", "coordinatesY",
+            "creationDate", "enginePower", "distanceTravelled", "type", "fuelType"
+        )
+        val file = File(filename)
+        val uniqueIds = mutableSetOf<Int>()
 
-        return try {
-            FileReader(filename).use { fileReader ->
-                CSVParser(fileReader, CSVFormat.DEFAULT.withHeader()).use { parser ->
-                    vehicles.clear()
-                    for ((index, record) in parser.withIndex()) {
-                        try {
-                            val id = requireNotNull(record["id"]) { "ID missing" }.toInt()
-                            val name = requireNotNull(record["name"]) { "Name missing" }
-                            val x = requireNotNull(record["coordinatesX"]) { "X coordinate missing" }.toInt()
-                            val y = requireNotNull(record["coordinatesY"]) { "XY coordinate missing" }.toFloat()
-                            val creationDate =
-                                requireNotNull(record["creationDate"]) { "Date of creation missing" }.toLong()
-                            val enginePower =
-                                requireNotNull(record["enginePower"]) { "Engine power missing" }.toDouble()
+        try {
+            if (!file.exists()) {
+                createFileWithHeaders(file, requiredHeaders)
+                warnings.add("File created with headers as it didn't exist")
+                return warnings
+            }
 
-                            val distanceTravelled = record["distanceTravelled"]?.takeIf { it.isNotBlank() }?.toDouble()
-                            val type = record["type"]?.takeIf { it.isNotBlank() }?.let { VehicleType.valueOf(it) }
-                            val fuelType = record["fuelType"]?.takeIf { it.isNotBlank() }?.let { FuelType.valueOf(it) }
+            if (file.length() == 0L) {
+                createFileWithHeaders(file, requiredHeaders)
+                warnings.add("File was created with headers")
+                return warnings
+            }
 
-                            validateVehicle(id, name, x, y, enginePower, distanceTravelled, type, fuelType, warnings)
+            if (!validateHeaders(file, requiredHeaders)) {
+                backupAndFixFile(file, requiredHeaders)
+                warnings.add("Invalid headers. File was backed up and emptied")
+                return warnings
+            }
 
-                            vehicles.add(
-                                Vehicle(
-                                    id,
-                                    name,
-                                    Coordinates(x, y),
-                                    creationDate,
-                                    enginePower,
-                                    distanceTravelled,
-                                    type,
-                                    fuelType
-                                )
-                            )
-                        } catch (e: Exception) {
-                            errors.add("Error at ${index + 2}: ${e.message ?: "Unknown error"}")
-                        }
-                    }
+            parseData(file, uniqueIds, warnings, errors)
+            return if (errors.isEmpty()) warnings else errors
+        } catch (e: Exception) {
+            return listOf("Critical error: ${e.message ?: "Unknown error"}")
+        }
+    }
+
+    //Создать файл и заполнить его только заголовками
+    private fun createFileWithHeaders(file: File, headers: List<String>) {
+        CSVPrinter(FileWriter(file), CSVFormat.DEFAULT).use {
+            it.printRecord(headers)
+        }
+    }
+
+    //Проверка заголовков
+    private fun validateHeaders(file: File, expected: List<String>): Boolean {
+        BufferedReader(FileReader(file)).use {
+            val actual = it.readLine().split(",")
+            return actual == expected
+        }
+    }
+
+    //Сохраняем файл с .bak и вызываем createFileWithHeaders
+    private fun backupAndFixFile(original: File, headers: List<String>) {
+        val timestamp = System.currentTimeMillis()
+        val backup = File("${original.path}.bak_$timestamp")
+        original.copyTo(backup, overwrite = true)
+        createFileWithHeaders(original, headers)
+    }
+
+    //Построково проверяем данные и добавляем их
+    private fun parseData(
+        file: File,
+        uniqueIds: MutableSet<Int>,
+        warnings: MutableList<String>,
+        errors: MutableList<String>
+    ) {
+        var lineNumber = 1
+
+        CSVParser(FileReader(file), CSVFormat.DEFAULT.withHeader()).use { parser ->
+            for (record in parser) {
+                lineNumber++
+                try {
+                    val id = parseId(record, uniqueIds)
+                    val name = parseName(record)
+                    val coordinates = parseCoordinates(record, id, warnings)
+                    val creationDate = parseCreationDate(record)
+                    val enginePower = parseEnginePower(record)
+                    val distanceTravelled = parseDistance(record, id, warnings)
+                    val (type, fuelType) = parseEnums(record)
+
+                    val vehicle = Vehicle(
+                        id,
+                        name,
+                        coordinates,
+                        creationDate,
+                        enginePower,
+                        distanceTravelled,
+                        type,
+                        fuelType
+                    )
+
+                    validateVehicle(vehicle, warnings)
+                    vehicles.add(vehicle)
+                } catch (e: Exception) {
+                    errors.add("Line $lineNumber: ${e.message}")
                 }
             }
-            errors.ifEmpty { warnings }
-        } catch (e: Exception) {
-            errors.add("Critical error: ${e.message}")
-            errors
         }
     }
 
-    private fun validateVehicle(
-        id: Int,
-        name: String,
-        x: Int,
-        y: Float,
-        enginePower: Double,
-        distanceTravelled: Double?,
-        type: VehicleType?,
-        fuelType: FuelType?,
-        warnings: MutableList<String>
-    ) {
-        if (name.isBlank()) warnings.add("Error at ID $id: Empty name")
-        if (x > 806) warnings.add("Error at ID $id: Coordinate X > 806")
-        if (y > 922) warnings.add("Error at ID $id: Coordinate Y > 922")
-        if (enginePower <= 0) warnings.add("Error at ID $id: Engine power must be positive")
-        distanceTravelled?.let {
-            if (it < 0) warnings.add("Error at ID $id: Distance travelled must be positive")
+    private fun parseId(record: CSVRecord, uniqueIds: MutableSet<Int>): Int {
+        val id = record["id"]?.toIntOrNull()
+            ?: throw Exception("Missing ID")
+
+        when {
+            id < 0 -> throw Exception("Negative ID")
+            !uniqueIds.add(id) -> throw Exception("Duplicate ID $id")
         }
-        if (type == null) warnings.add("Warning at ID $id: Vehicle type missing")
-        if (fuelType == null) warnings.add("Warning at ID $id: Fuel type missing")
+        return id
     }
+
+    private fun parseName(record: CSVRecord): String {
+        //Возвращает имя или null
+        return record["name"]?.takeIf { it.isNotBlank() }
+            ?: throw Exception("Missing name")
+    }
+
+    private fun parseCoordinates(record: CSVRecord, id: Int, warnings: MutableList<String>): Coordinates {
+        return try {
+            val x = record["coordinatesX"]?.toIntOrNull()
+                ?: throw Exception("Invalid X coordinate")
+            val y = record["coordinatesY"]?.toFloatOrNull()
+                ?: throw Exception("Invalid Y coordinate")
+
+            val coordinates = Coordinates(x, y)
+            if (x > 806) warnings.add("ID $id: X coordinate at maximum (806)")
+            if (y > 922) warnings.add("ID $id: Y coordinate at maximum (922)")
+            coordinates
+        } catch (e: Exception) {
+            warnings.add("ID $id: ${e.message}")
+            throw Exception("Invalid coordinates format").initCause(e)
+        }
+    }
+
+    private fun parseCreationDate(record: CSVRecord): Long {
+        val date = record["creationDate"]?.toLongOrNull()
+            ?: throw Exception("Invalid creation date")
+        if (date > System.currentTimeMillis()) {
+            throw Exception("Creation date is in the future")
+        }
+        return date
+    }
+
+    private fun parseEnginePower(record: CSVRecord): Double {
+        return record["enginePower"]?.toDoubleOrNull()
+            ?.takeIf { it > 0 }
+            ?: throw Exception("Invalid engine power")
+    }
+
+    private fun parseDistance(record: CSVRecord, id: Int, warnings: MutableList<String>): Double? {
+        return record["distanceTravelled"]?.takeIf { it.isNotBlank() }
+            ?.toDoubleOrNull()
+            ?.also {
+                if (it <= 0) warnings.add("ID $id: Non-positive distance")
+            }
+    }
+
+    private fun parseEnums(record: CSVRecord): Pair<VehicleType?, FuelType?> {
+        val type = record["type"]?.toEnumOrNull<VehicleType>()
+        val fuelType = record["fuelType"]?.toEnumOrNull<FuelType>()
+        return type to fuelType
+    }
+
+
+    private fun validateVehicle(vehicle: Vehicle, warnings: MutableList<String>) {
+        with(vehicle) {
+            if (name.isBlank()) warnings.add("ID $id: Empty name")
+            if (enginePower <= 0) warnings.add("ID $id: Engine power must be positive")
+            distanceTravelled?.let {
+                if (it <= 0) warnings.add("ID $id: Distance must be positive")
+            }
+        }
+    }
+
+    private inline fun <reified T : Enum<T>> String?.toEnumOrNull(): T? = this?.let { value ->
+        enumValues<T>().firstOrNull { it.name.equals(value, ignoreCase = true) }
+    }
+
 
     fun saveToFile(): List<String> {
         return try {
@@ -145,27 +254,32 @@ class CollectionManager(private val filename: String) {
     fun getById(id: Int): Vehicle? {
         return vehicles.find { it.id == id }
     }
+
     fun deleteElement(id: Int) {
         val vehicleToRemove = vehicles.find { it.id == id }
         if (vehicleToRemove != null) {
             vehicles.remove(vehicleToRemove) // Удаляем найденный Vehicle
         }
     }
+
     fun deleteElement(vehicle: Vehicle) {
         if (vehicles.contains(vehicle)) {
             vehicles.remove(vehicle) // Удаляем найденный Vehicle
         }
     }
+
     fun deleteByNumber(number: Int) {
-        if(this.isEmpty() || this.size() - 1 < number) {
+        if (this.isEmpty() || this.size() - 1 < number) {
             return
         } else {
             vehicles.removeAt(number)
         }
     }
+
     fun size(): Int {
         return vehicles.size
     }
+
     fun isEmpty(): Boolean {
         return vehicles.isEmpty()
     }
@@ -175,15 +289,18 @@ class CollectionManager(private val filename: String) {
         lastId = 1
         VehicleReader.clearId()
     }
+
     fun getMax(): Vehicle? {
         return vehicles.maxOrNull()
     }
+
     fun getMin(): Vehicle? {
         return vehicles.minOrNull()
     }
+
     fun getMin(characteristic: String): Vehicle? {
 
-        return if(this.isEmpty()) {
+        return if (this.isEmpty()) {
             null
         } else {
             when (characteristic) {
@@ -199,9 +316,9 @@ class CollectionManager(private val filename: String) {
         }
 
     }
-    fun getMax(characteristic: String): Vehicle? {
 
-        return if(this.isEmpty()) {
+    fun getMax(characteristic: String): Vehicle? {
+        return if (this.isEmpty()) {
             null
         } else {
             when (characteristic) {
@@ -216,7 +333,8 @@ class CollectionManager(private val filename: String) {
             }
         }
     }
-    fun findByCharacteristic(characteristic: String, arg: String) : Vehicle? {
+
+    fun findByCharacteristic(characteristic: String, arg: String): Vehicle? {
         return when (characteristic) {
             "id" -> vehicles.find { it.id == arg.toInt() }
             "name" -> vehicles.find { it.name == arg }
@@ -228,6 +346,7 @@ class CollectionManager(private val filename: String) {
             else -> throw IllegalArgumentException("Unknown characteristic: $characteristic")
         }
     }
+
     fun filterByCharacteristic(characteristic: String, arg: String): List<Vehicle> {
         return when (characteristic) {
             "id" -> vehicles.filter { it.id == arg.toInt() }
@@ -240,5 +359,6 @@ class CollectionManager(private val filename: String) {
             else -> throw IllegalArgumentException("Unknown characteristic: $characteristic")
         }
     }
+
     fun getAll() = vehicles.toList()
 }
