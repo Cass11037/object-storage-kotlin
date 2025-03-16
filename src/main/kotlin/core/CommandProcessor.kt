@@ -6,7 +6,7 @@ import java.util.*
 
 class CommandProcessor(
     private val scanner: Scanner,
-    private var fileName: String
+    fileName: String
 ) {
     private val commands: Map<String, Command> = loadCommands()
     val collectionManager = CollectionManager(fileName)
@@ -62,6 +62,7 @@ class CommandProcessor(
         ).associateBy { it.getName() }
         return allCommands
     }
+
     private fun processCommand(input: String) {
         val parts = input.split("\\s+".toRegex())
         val command = commands[parts[0]] ?: run {

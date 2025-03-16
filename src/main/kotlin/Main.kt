@@ -1,26 +1,18 @@
 package org.example
 
 import org.example.core.*
-import org.example.commands.*
 import java.io.File
 import java.io.IOException
 import java.util.*
-import kotlin.system.exitProcess
 
 //теория
 //комментарии
 //отчет
 //
-//файл если ничего не введено то использовать перманентный
-//проверять создание имени файла нового через регех
-//Написать скрипт который будет создавать 10 объектов
-//чето с сортировкой
 //сейв в файл если без арг то в перма
 //сейв уточнять в какой файл
 //опять сделать loadfromfile
-//и исправить id из-за этого
 //
-//сделать нормальный мейн
 
 
 fun fileReader(scanner: Scanner): String {
@@ -101,7 +93,6 @@ fun fileReader(scanner: Scanner): String {
     }
     throw IllegalStateException("Too many invalid attempts, BYE!")
 }
-
 
 fun main() {
     val scanner = Scanner(System.`in`)
