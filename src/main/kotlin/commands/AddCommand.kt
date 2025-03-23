@@ -2,7 +2,6 @@ package org.example.commands
 
 import org.example.core.CollectionManager
 import org.example.core.VehicleReader
-import io.mockk.*
 
 class AddCommand(
     private val reader: VehicleReader
@@ -13,8 +12,7 @@ class AddCommand(
 
             return
         }
-        val vehicle = reader.readVehicle()
-        collectionManager.addVehicle(vehicle)
+        val vehicle = collectionManager.addVehicle(reader.readVehicle())
         println("Vehicle added with ID: ${vehicle.id}")
     }
 }

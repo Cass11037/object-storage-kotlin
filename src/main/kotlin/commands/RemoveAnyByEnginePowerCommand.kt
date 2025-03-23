@@ -12,10 +12,10 @@ class RemoveAnyByEnginePowerCommand : RemoveAnyByCharacteristicCommand(
             println("Error: Args can be size ${args.size}.")
             return
         }
-        if (args.isEmpty()) {
+        /*if (args.isEmpty()) {
             println("Error: Engine power value not specified.")
             return
-        }
+        }*/
         super.execute(listOf("enginePower", args[0]), collectionManager)
     }
 }

@@ -1,9 +1,15 @@
 package org.example.core
 
-import org.apache.commons.csv.*
-import org.example.model.*
+import org.apache.commons.csv.CSVFormat
+import org.apache.commons.csv.CSVParser
+import org.apache.commons.csv.CSVPrinter
+import org.apache.commons.csv.CSVRecord
+import org.example.model.Coordinates
+import org.example.model.FuelType
+import org.example.model.Vehicle
+import org.example.model.VehicleType
 import java.io.*
-import java.util.LinkedList
+import java.util.*
 
 @Suppress("DEPRECATION")
 class CollectionManager(private val filename: String) {
@@ -235,7 +241,7 @@ class CollectionManager(private val filename: String) {
         }
     }
 
-    fun addVehicle(newVehicle: Vehicle) {
+    fun addVehicle(newVehicle: Vehicle): Vehicle {
         val newId = ++lastId
         vehicles.add(
             Vehicle(
@@ -249,6 +255,7 @@ class CollectionManager(private val filename: String) {
                 newVehicle.fuelType
             )
         )
+        return vehicles.last()
     }
 
     fun getById(id: Int): Vehicle? {
