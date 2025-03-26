@@ -12,7 +12,12 @@ class SaveCommand : Command (
             println("Error: Args can be size ${args.size}.")
             return
         }
-        collectionManager.saveToFile()
+        if(args.isEmpty()) {
+            collectionManager.saveToFile()
+        } else {
+            collectionManager.saveToFile(args[0])
+        }
+
         println("Data saved to your file.")
     }
     private fun checkSizeOfArgs(f: Int, s: Int) : Boolean {
