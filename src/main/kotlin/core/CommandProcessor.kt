@@ -2,6 +2,8 @@ package org.example.core
 
 import IOManager
 import org.example.commands.*
+import java.nio.file.Files
+import java.nio.file.Paths
 
 
 class CommandProcessor(
@@ -20,7 +22,7 @@ class CommandProcessor(
     fun start() {
         if (commands.isEmpty()) commands = loadCommands()
         ioManager.outputLine("Transport manager 3000")
-        commands["help"]?.execute(emptyList(), collectionManager)
+        commands["help"]?.execute(emptyList(), collectionManager, ioManager)
         while (true) {
             print("> ")
             val input = ioManager.readLine().trim()
@@ -88,7 +90,7 @@ class CommandProcessor(
             return
         }
         try {
-            command.execute(parts.drop(1), collectionManager)
+            command.execute(parts.drop(1), collectionManager, ioManager)
         } catch (e: Exception) {
             ioManager.outputLine("Error executing command: ${e.message}")
         }
