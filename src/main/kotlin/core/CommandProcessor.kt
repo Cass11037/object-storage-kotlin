@@ -5,30 +5,37 @@ import java.io.File
 import java.util.*
 
 class CommandProcessor(
-    private var commands : Map<String, Command>,
+    private var commands: Map<String, Command>,
     private val scanner: Scanner,
     fileName: String
 ) {
+    private lateinit var vehicleReader: VehicleReader
+
     constructor(scanner: Scanner, fileName: String) : this(emptyMap(), scanner, fileName)
 
     val collectionManager = CollectionManager(fileName)
-    private val executedScripts = mutableSetOf<String>() // protection against recursion & may be a file reading in the file
+    private val executedScripts =
+        mutableSetOf<String>() // protection against recursion & may be a file reading in the file
+
     fun start() {
         if (commands.isEmpty()) commands = loadCommands()
         println("Transport manager 3000")
-        commands["help"]?.execute(emptyList(),collectionManager)
+        commands["help"]?.execute(emptyList(), collectionManager)
         while (true) {
             print("> ")
             val input = scanner.nextLine().trim()
+            val executeScriptRegex = "^execute_script\\s.+\$".toRegex()
             when {
                 input == "exit" -> break
+                executeScriptRegex.matches(input) -> executeScript(input)
                 input.isEmpty() -> continue
                 else -> processCommand(input)
             }
         }
     }
+
     private fun loadCommands(): Map<String, Command> {
-        val vehicleReader = VehicleReader(scanner)
+        vehicleReader = VehicleReader(scanner)
         val commands = listOf(
             AddCommand(vehicleReader),
             AddIfMaxCommand(vehicleReader),
@@ -72,7 +79,7 @@ class CommandProcessor(
             println("Unknown command: ${parts[0]}")
             return
         }
-        if (command.getName()== "execute_script") {
+        if (command.getName() == "execute_script") {
             if (parts.isEmpty()) {
                 println("Error: The file name is not specified.")
                 return
@@ -86,7 +93,10 @@ class CommandProcessor(
             println("Error executing command: ${e.message}")
         }
     }
-    private fun executeScript(filename: String) {
+
+    private fun executeScript(input: String) {
+        val parts = input.split("\\s+".toRegex())
+        val filename = parts[1]
         if (filename in executedScripts) {
             println("Error: Recursion detected in script execution $filename.")
             return
@@ -102,17 +112,23 @@ class CommandProcessor(
             println("Error: No rights to read the file $filename.")
             return
         }
-
-        executedScripts.add(filename) // Adding the file to the list of executable files
-
+        executedScripts.add(filename)
         val scriptScanner = Scanner(file)
-        while (scriptScanner.hasNextLine()) {
-            val commandLine = scriptScanner.nextLine().trim()
-            if (commandLine.isNotEmpty()) {
-                processCommand(commandLine)
+        val originalScanner = vehicleReader.getScanner() // оригинальный scanner
+
+        try {
+            vehicleReader.setScanner(scriptScanner) // scanner из скрипта
+            while (scriptScanner.hasNextLine()) {
+                val commandLine = scriptScanner.nextLine().trim()
+                if (commandLine.isNotEmpty()) {
+                    processCommand(commandLine)
+                }
             }
+            println("File $filename was read.")
+        } finally {
+            vehicleReader.setScanner(originalScanner) // Восстанавливаем оригинальный scanner
+            scriptScanner.close()
+            executedScripts.remove(filename)
         }
-        println("File $filename was read.")
-        executedScripts.remove(filename) //delete
     }
 }

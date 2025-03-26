@@ -3,7 +3,7 @@ package org.example.core
 import org.example.model.*
 import java.util.Scanner
 
-class VehicleReader(private val scanner: Scanner) {
+class VehicleReader(private var scanner: Scanner) {
     private val validInputs = listOf("name", "coordinates", "enginePower", "distanceTravelled", "type", "fuelType")
     companion object {
         private var nextId = 1 // Общая переменная для всех экземпляров
@@ -127,5 +127,12 @@ class VehicleReader(private val scanner: Scanner) {
                 println("Wrong value! Try again!")
             }
         }
+    }
+    fun setScanner(newScanner: Scanner) {
+        scanner = newScanner
+    }
+
+    fun getScanner(): Scanner {
+        return scanner
     }
 }

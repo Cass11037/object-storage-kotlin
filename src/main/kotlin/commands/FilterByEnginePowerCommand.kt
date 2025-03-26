@@ -9,7 +9,7 @@ class FilterByEnginePowerCommand :  FilterByCharacteristicCommand (
 ){
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
         if(!checkSizeOfArgs(args.size)) {
-            println("Error: Args can be size ${args.size}.")
+            println("Error: Args can be size ${size}.")
             return
         }
         super.execute(listOf("enginePower", args[0]), collectionManager)
