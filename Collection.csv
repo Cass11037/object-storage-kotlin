@@ -1,3 +1,4 @@
 id,name,coordinatesX,coordinatesY,creationDate,enginePower,distanceTravelled,type,fuelType
 1,carname,806,922.0,1742141727084,10201.0,213213.0,BOAT,MANPOWER
 2,2,2,2.0,1742737047538,2.0,,,
+3,dfafwef,-1000000000,1.4E-41,1742984722532,9.0E49,1.0,BOAT,NUCLEAR

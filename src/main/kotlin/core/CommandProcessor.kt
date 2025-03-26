@@ -5,13 +5,16 @@ import java.io.File
 import java.util.*
 
 class CommandProcessor(
+    private var commands : Map<String, Command>,
     private val scanner: Scanner,
     fileName: String
 ) {
-    private val commands: Map<String, Command> = loadCommands()
+    constructor(scanner: Scanner, fileName: String) : this(emptyMap(), scanner, fileName)
+
     val collectionManager = CollectionManager(fileName)
     private val executedScripts = mutableSetOf<String>() // protection against recursion & may be a file reading in the file
     fun start() {
+        if (commands.isEmpty()) commands = loadCommands()
         println("Transport manager 3000")
         commands["help"]?.execute(emptyList(),collectionManager)
         while (true) {

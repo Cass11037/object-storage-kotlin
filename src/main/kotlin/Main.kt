@@ -27,7 +27,7 @@ fun fileReader(scanner: Scanner): String {
             when {
                 file.exists() -> {
                     println("File '$fileName' already exists.")
-                    null
+                    fileName
                 }
                 file.createNewFile() -> {
                     println("File '$fileName' created successfully.")
@@ -48,7 +48,7 @@ fun fileReader(scanner: Scanner): String {
     }
     while (attempts < maxAttempts) {
         println("Would you like to:")
-        println("1. Create new CSV file")
+        println("1. Create new or load existing CSV file")
         println("2. Use permanent file ($permanentFileName)")
         print("> ")
         when (scanner.nextLine().trim().lowercase()) {

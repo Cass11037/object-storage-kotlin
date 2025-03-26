@@ -73,14 +73,14 @@ class VehicleReader(private val scanner: Scanner) {
             }
         }
     }
-    private fun readBoundedFloat(prompt: String, max: Float): Float {
+    private fun readBoundedFloat(prompt: String,min: Float = Float.MIN_VALUE, max: Float): Float {
         while (true) {
             print("$prompt (max. $max): ")
             val input = scanner.nextLine()
             try {
                 val value = input.toFloat()
-                if (value <= max) return value
-                println("Value must not be higher than $max")
+                if (value in min.. max) return value
+                println("Value must be in range 0.0000000000000000000000000000000000000000000014 to $max")
             } catch (e: NumberFormatException) {
                 println("Incorrect value!")
             }
