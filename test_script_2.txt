@@ -1,0 +1,21 @@
+min_by_name
+
+filter_by_engine_power 2700
+filter_by_engine_power 7000000
+
+add_if_max
+Vehicle11
+50
+145
+3000
+3930
+BOAT
+NUCLEAR
+add_if_min
+Vehicle1
+50
+145
+3000
+3930
+BOAT
+NUCLEAR
