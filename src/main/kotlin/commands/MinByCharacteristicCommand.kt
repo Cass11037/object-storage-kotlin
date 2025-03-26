@@ -10,13 +10,9 @@ abstract class MinByCharacteristicCommand (
     name = name,
     description = description,
 
-    size = 1
+    size = size
 ) {
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
-        if (args.isEmpty() || args.size != 1) {
-            println("Error: Args can not be empty.")
-            return
-        }
         val vehicle = collectionManager.getMin(args[0])
         if(vehicle == null)  {
             println("No vehicle found.")

@@ -202,7 +202,40 @@ class CollectionManager(private val filename: String) {
 
     fun saveToFile(): List<String> {
         return try {
-            FileOutputStream(filename).use { fileOutputStream ->
+            saveToFile("Collection.csv")
+        } catch (e: IOException) {
+            listOf("Error while saving file: ${e.message}")
+        }
+    }
+    fun saveToFile(file: String): List<String> {
+        return try {
+            fun createFile(fileName: String): String? {
+                return try {
+                    val file1= File(fileName)
+                    when {
+                        file1.exists() -> {
+                            println("File '$fileName' already exists.")
+                            fileName
+                        }
+                        file1.createNewFile() -> {
+                            println("File '$fileName' created successfully.")
+                            fileName
+                        }
+                        else -> {
+                            println("Failed to create '$fileName'.")
+                            null
+                        }
+                    }
+                } catch (e: SecurityException) {
+                    println("Security error: ${e.message}")
+                    null
+                } catch (e: IOException) {
+                    println("IO error: ${e.message}")
+                    null
+                }
+            }
+            val newFile = createFile(file) ?: return emptyList()
+            FileOutputStream(newFile).use { fileOutputStream ->
                 OutputStreamWriter(fileOutputStream, "UTF-8").use { writer ->
                     CSVPrinter(writer, CSVFormat.DEFAULT).use { printer ->
                         // Запись заголовков
@@ -240,7 +273,6 @@ class CollectionManager(private val filename: String) {
             listOf("Error while saving file: ${e.message}")
         }
     }
-
     fun addVehicle(newVehicle: Vehicle): Vehicle {
         val newId = ++lastId
         vehicles.add(

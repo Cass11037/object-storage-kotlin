@@ -121,6 +121,7 @@ class CommandProcessor(
             while (scriptScanner.hasNextLine()) {
                 val commandLine = scriptScanner.nextLine().trim()
                 if (commandLine.isNotEmpty()) {
+                    println("> $commandLine")
                     processCommand(commandLine)
                 }
             }
