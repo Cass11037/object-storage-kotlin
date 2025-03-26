@@ -1,5 +1,6 @@
 package org.example.commands
 
+import IOManager
 import org.example.core.CollectionManager
 
 abstract class FilterByCharacteristicCommand (
@@ -11,13 +12,13 @@ abstract class FilterByCharacteristicCommand (
     size = size
 
 ) {
-    override fun execute(args: List<String>, collectionManager: CollectionManager) {
+    override fun execute(args: List<String>, collectionManager: CollectionManager, ioManager: IOManager) {
         val vehicles = collectionManager.filterByCharacteristic(args[0], args[1])
         if(vehicles.isEmpty())  {
-            println("No vehicles found with $args[0] = $args[1]")
+            ioManager.outputLine("No vehicles found with $args[0] = $args[1]")
             return
         }
-        println("Vehicles with $args[0] = $args[1]:")
-        println(vehicles)
+        ioManager.outputLine("Vehicles with $args[0] = $args[1]:")
+        ioManager.outputLine(vehicles)
     }
 }

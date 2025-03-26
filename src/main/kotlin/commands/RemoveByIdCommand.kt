@@ -1,5 +1,6 @@
 package org.example.commands
 
+import IOManager
 import org.example.core.CollectionManager
 
 class RemoveByIdCommand : RemoveAnyByCharacteristicCommand (
@@ -7,16 +8,16 @@ class RemoveByIdCommand : RemoveAnyByCharacteristicCommand (
     description = "Delete an item from the collection by its id.",
     size = 1
 ) {
-    override fun execute(args: List<String>, collectionManager: CollectionManager) {
+    override fun execute(args: List<String>, collectionManager: CollectionManager, ioManager: IOManager) {
         if(!checkSizeOfArgs(args.size)) {
-            println("Error: Args can be size ${size}.")
+            ioManager.outputLine("Error: Args can be size ${size}.")
             return
         }
         //val id = args[0].toInt()
         /*if (args.isEmpty()) {
-            println("No element with $id.")
+            ioManager.outputLine("No element with $id.")
             return
         }*/
-        super.execute(listOf("id", args[0]), collectionManager)
+        super.execute(listOf("id", args[0]), collectionManager, ioManager)
     }
 }

@@ -1,5 +1,6 @@
 package org.example.commands
 
+import IOManager
 import org.example.core.CollectionManager
 
 class RemoveAnyByEnginePowerCommand : RemoveAnyByCharacteristicCommand(
@@ -7,15 +8,15 @@ class RemoveAnyByEnginePowerCommand : RemoveAnyByCharacteristicCommand(
     description = "Remove one element whose enginePower matches the specified value.",
     size = 1
 ) {
-    override fun execute(args: List<String>, collectionManager: CollectionManager) {
+    override fun execute(args: List<String>, collectionManager: CollectionManager, ioManager: IOManager) {
         if(!checkSizeOfArgs(args.size)) {
-            println("Error: Args can be size ${size}.")
+            ioManager.outputLine("Error: Args can be size ${size}.")
             return
         }
         /*if (args.isEmpty()) {
-            println("Error: Engine power value not specified.")
+            ioManager.outputLine("Error: Engine power value not specified.")
             return
         }*/
-        super.execute(listOf("enginePower", args[0]), collectionManager)
+        super.execute(listOf("enginePower", args[0]), collectionManager, ioManager)
     }
 }

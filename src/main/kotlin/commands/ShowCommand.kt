@@ -1,5 +1,6 @@
 package org.example.commands
 
+import IOManager
 import org.example.core.CollectionManager
 
 class ShowCommand : Command(
@@ -7,16 +8,16 @@ class ShowCommand : Command(
     description = "Display all the items in the collection.",
     size = 0
 ) {
-    override fun execute(args: List<String>, collectionManager: CollectionManager) {
+    override fun execute(args: List<String>, collectionManager: CollectionManager, ioManager: IOManager) {
         if(!checkSizeOfArgs(args.size)) {
-            println("Error: Args can be size ${size}.")
+            ioManager.outputLine("Error: Args can be size ${size}.")
             return
         }
         if(collectionManager.isEmpty()) {
-            println("Collection is empty.")
+            ioManager.outputLine("Collection is empty.")
         } else {
             collectionManager.getAll().forEach {
-                vehicle -> println(vehicle)
+                vehicle -> ioManager.outputLine(vehicle)
             }
         }
     }

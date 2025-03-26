@@ -1,5 +1,6 @@
 package org.example.commands
 
+import IOManager
 import org.example.core.CollectionManager
 
 abstract class MinByCharacteristicCommand (
@@ -12,12 +13,12 @@ abstract class MinByCharacteristicCommand (
 
     size = size
 ) {
-    override fun execute(args: List<String>, collectionManager: CollectionManager) {
+    override fun execute(args: List<String>, collectionManager: CollectionManager, ioManager: IOManager) {
         val vehicle = collectionManager.getMin(args[0])
         if(vehicle == null)  {
-            println("No vehicle found.")
+            ioManager.outputLine("No vehicle found.")
             return
         }
-        println("Element found with minimal $args[0]: $vehicle")
+        ioManager.outputLine("Element found with minimal $args[0]: $vehicle")
     }
 }
