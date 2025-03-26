@@ -9,6 +9,8 @@ import org.example.model.FuelType
 import org.example.model.Vehicle
 import org.example.model.VehicleType
 import java.io.*
+import java.nio.charset.StandardCharsets
+import java.nio.file.*
 import java.util.*
 
 @Suppress("DEPRECATION")
@@ -28,94 +30,94 @@ class CollectionManager(private val filename: String) {
             "id", "name", "coordinatesX", "coordinatesY",
             "creationDate", "enginePower", "distanceTravelled", "type", "fuelType"
         )
-        val file = File(filename)
+        val path = Paths.get(filename)
         val uniqueIds = mutableSetOf<Int>()
 
         try {
-            if (!file.exists()) {
-                createFileWithHeaders(file, requiredHeaders)
-                warnings.add("File created with headers as it didn't exist")
-                return warnings
+            when {
+                Files.notExists(path) -> {
+                    createFileWithHeaders(path, requiredHeaders)
+                    warnings.add("File created with headers as it didn't exist")
+                    return warnings
+                }
+                Files.size(path) == 0L -> {
+                    createFileWithHeaders(path, requiredHeaders)
+                    warnings.add("File was created with headers")
+                    return warnings
+                }
+                !validateHeaders(path, requiredHeaders) -> {
+                    backupAndFixFile(path, requiredHeaders)
+                    warnings.add("Invalid headers. File was backed up and emptied")
+                    return warnings
+                }
+                else -> parseData(path, uniqueIds, warnings, errors)
             }
-
-            if (file.length() == 0L) {
-                createFileWithHeaders(file, requiredHeaders)
-                warnings.add("File was created with headers")
-                return warnings
-            }
-
-            if (!validateHeaders(file, requiredHeaders)) {
-                backupAndFixFile(file, requiredHeaders)
-                warnings.add("Invalid headers. File was backed up and emptied")
-                return warnings
-            }
-
-            parseData(file, uniqueIds, warnings, errors)
             return if (errors.isEmpty()) warnings else errors
         } catch (e: Exception) {
             return listOf("Critical error: ${e.message ?: "Unknown error"}")
         }
     }
 
-    //Создать файл и заполнить его только заголовками
-    private fun createFileWithHeaders(file: File, headers: List<String>) {
-        CSVPrinter(FileWriter(file), CSVFormat.DEFAULT).use {
-            it.printRecord(headers)
+    private fun createFileWithHeaders(path: Path, headers: List<String>) {
+        Files.newBufferedWriter(path, StandardCharsets.UTF_8).use { writer ->
+            CSVPrinter(writer, CSVFormat.DEFAULT).apply {
+                printRecord(headers)
+                flush()
+            }
         }
     }
 
-    //Проверка заголовков
-    private fun validateHeaders(file: File, expected: List<String>): Boolean {
-        BufferedReader(FileReader(file)).use {
-            val actual = it.readLine().split(",")
+    private fun validateHeaders(path: Path, expected: List<String>): Boolean {
+        Files.newBufferedReader(path, StandardCharsets.UTF_8).use { reader ->
+            val actual = reader.readLine().split(",")
             return actual == expected
         }
     }
 
-    //Сохраняем файл с .bak и вызываем createFileWithHeaders
-    private fun backupAndFixFile(original: File, headers: List<String>) {
+    private fun backupAndFixFile(original: Path, headers: List<String>) {
         val timestamp = System.currentTimeMillis()
-        val backup = File("${original.path}.bak_$timestamp")
-        original.copyTo(backup, overwrite = true)
+        val backupPath = Paths.get("${original}.bak_$timestamp")
+        Files.copy(original, backupPath, StandardCopyOption.REPLACE_EXISTING)
         createFileWithHeaders(original, headers)
     }
 
-    //Построково проверяем данные и добавляем их
     private fun parseData(
-        file: File,
+        path: Path,
         uniqueIds: MutableSet<Int>,
         warnings: MutableList<String>,
         errors: MutableList<String>
     ) {
         var lineNumber = 1
 
-        CSVParser(FileReader(file), CSVFormat.DEFAULT.withHeader()).use { parser ->
-            for (record in parser) {
-                lineNumber++
-                try {
-                    val id = parseId(record, uniqueIds)
-                    val name = parseName(record)
-                    val coordinates = parseCoordinates(record, id, warnings)
-                    val creationDate = parseCreationDate(record)
-                    val enginePower = parseEnginePower(record)
-                    val distanceTravelled = parseDistance(record, id, warnings)
-                    val (type, fuelType) = parseEnums(record)
+        Files.newBufferedReader(path, StandardCharsets.UTF_8).use { reader ->
+            CSVParser(reader, CSVFormat.DEFAULT.withHeader()).use { parser ->
+                for (record in parser) {
+                    lineNumber++
+                    try {
+                        val id = parseId(record, uniqueIds)
+                        val name = parseName(record)
+                        val coordinates = parseCoordinates(record, id, warnings)
+                        val creationDate = parseCreationDate(record)
+                        val enginePower = parseEnginePower(record)
+                        val distanceTravelled = parseDistance(record, id, warnings)
+                        val (type, fuelType) = parseEnums(record)
 
-                    val vehicle = Vehicle(
-                        id,
-                        name,
-                        coordinates,
-                        creationDate,
-                        enginePower,
-                        distanceTravelled,
-                        type,
-                        fuelType
-                    )
+                        val vehicle = Vehicle(
+                            id,
+                            name,
+                            coordinates,
+                            creationDate,
+                            enginePower,
+                            distanceTravelled,
+                            type,
+                            fuelType
+                        )
 
-                    validateVehicle(vehicle, warnings)
-                    vehicles.add(vehicle)
-                } catch (e: Exception) {
-                    errors.add("Line $lineNumber: ${e.message}")
+                        validateVehicle(vehicle, warnings)
+                        vehicles.add(vehicle)
+                    } catch (e: Exception) {
+                        errors.add("Line $lineNumber: ${e.message}")
+                    }
                 }
             }
         }
@@ -202,75 +204,44 @@ class CollectionManager(private val filename: String) {
 
     fun saveToFile(): List<String> {
         return try {
-            saveToFile("Collection.csv")
-        } catch (e: IOException) {
-            listOf("Error while saving file: ${e.message}")
-        }
-    }
-    fun saveToFile(file: String): List<String> {
-        return try {
-            fun createFile(fileName: String): String? {
-                return try {
-                    val file1= File(fileName)
-                    when {
-                        file1.exists() -> {
-                            println("File '$fileName' already exists.")
-                            fileName
-                        }
-                        file1.createNewFile() -> {
-                            println("File '$fileName' created successfully.")
-                            fileName
-                        }
-                        else -> {
-                            println("Failed to create '$fileName'.")
-                            null
-                        }
-                    }
-                } catch (e: SecurityException) {
-                    println("Security error: ${e.message}")
-                    null
-                } catch (e: IOException) {
-                    println("IO error: ${e.message}")
-                    null
-                }
-            }
-            val newFile = createFile(file) ?: return emptyList()
-            FileOutputStream(newFile).use { fileOutputStream ->
-                OutputStreamWriter(fileOutputStream, "UTF-8").use { writer ->
-                    CSVPrinter(writer, CSVFormat.DEFAULT).use { printer ->
-                        // Запись заголовков
-                        printer.printRecord(
-                            "id",
-                            "name",
-                            "coordinatesX",
-                            "coordinatesY",
-                            "creationDate",
-                            "enginePower",
-                            "distanceTravelled",
-                            "type",
-                            "fuelType"
-                        )
-
-                        // Запись данных
-                        vehicles.forEach { vehicle ->
-                            printer.printRecord(
-                                vehicle.id,
-                                vehicle.name,
-                                vehicle.coordinates.x,
-                                vehicle.coordinates.y,
-                                vehicle.creationDate,
-                                vehicle.enginePower,
-                                vehicle.distanceTravelled,
-                                vehicle.type?.name,
-                                vehicle.fuelType?.name
-                            )
-                        }
-                    }
-                }
-            }
+            saveToFile(Paths.get(filename))
             emptyList()
         } catch (e: IOException) {
             listOf("Error while saving file: ${e.message}")
+        } catch (e: SecurityException) {
+            listOf("Security error: ${e.message}")
+        }
+    }
+
+     fun saveToFile(path: Path) {
+        Files.newBufferedWriter(path, StandardCharsets.UTF_8, StandardOpenOption.TRUNCATE_EXISTING).use { writer ->
+            CSVPrinter(writer, CSVFormat.DEFAULT).use { printer ->
+                printer.printRecord(
+                    "id",
+                    "name",
+                    "coordinatesX",
+                    "coordinatesY",
+                    "creationDate",
+                    "enginePower",
+                    "distanceTravelled",
+                    "type",
+                    "fuelType"
+                )
+
+                vehicles.forEach { vehicle ->
+                    printer.printRecord(
+                        vehicle.id,
+                        vehicle.name,
+                        vehicle.coordinates.x,
+                        vehicle.coordinates.y,
+                        vehicle.creationDate,
+                        vehicle.enginePower,
+                        vehicle.distanceTravelled,
+                        vehicle.type?.name,
+                        vehicle.fuelType?.name
+                    )
+                }
+            }
         }
     }
     fun addVehicle(newVehicle: Vehicle): Vehicle {

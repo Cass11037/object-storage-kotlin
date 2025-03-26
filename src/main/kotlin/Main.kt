@@ -1,35 +1,27 @@
 package org.example
 
 import org.example.core.*
-import java.io.File
 import java.io.IOException
+import java.nio.file.*
 import java.util.*
-
-//теория
-//комментарии
-//отчет
-//
-//сейв в файл если без арг то в перма
-//сейв уточнять в какой файл
-//опять сделать loadfromfile
-//
 
 
 fun fileReader(scanner: Scanner): String {
     val permanentFileName = "Collection.csv"
-    val maxAttempts = 3 //макс попытки на создание файла
+    val maxAttempts = 3
     var attempts = 0
     val csvRegex = "^[a-zA-Z0-9_\\-() ]+\\.csv$".toRegex()
-    //функция для создания файла как обычного так и перманентного
+
     fun createOrLoadFile(fileName: String): String? {
         return try {
-            val file = File(fileName)
+            val path = Paths.get(fileName)
             when {
-                file.exists() -> {
+                Files.exists(path) -> {
                     println("File '$fileName' already exists.")
                     fileName
                 }
-                file.createNewFile() -> {
+                Files.notExists(path) -> {
+                    Files.createFile(path)
                     println("File '$fileName' created successfully.")
                     fileName
                 }
@@ -44,8 +36,12 @@ fun fileReader(scanner: Scanner): String {
         } catch (e: IOException) {
             println("IO error: ${e.message}")
             null
+        } catch (e: FileAlreadyExistsException) {
+            println("File already exists: ${e.message}")
+            fileName
         }
     }
+
     while (attempts < maxAttempts) {
         println("Would you like to:")
         println("1. Create new or load existing CSV file")
@@ -74,9 +70,9 @@ fun fileReader(scanner: Scanner): String {
                 }
             }
             "2", "n", "no", "нет" -> {
-                val file = File(permanentFileName)
+                val path = Paths.get(permanentFileName)
                 return when {
-                    file.exists() -> permanentFileName
+                    Files.exists(path) -> permanentFileName
                     else -> {
                         createOrLoadFile(permanentFileName) ?: run {
                             println("Fatal error: Cannot create permanent file")

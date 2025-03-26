@@ -1,6 +1,7 @@
 package org.example.commands
 
 import org.example.core.CollectionManager
+import java.nio.file.Path
 
 class SaveCommand : Command (
     name = "save",
@@ -15,7 +16,7 @@ class SaveCommand : Command (
         if(args.isEmpty()) {
             collectionManager.saveToFile()
         } else {
-            collectionManager.saveToFile(args[0])
+            collectionManager.saveToFile(Path.of(args[0]))
         }
 
         println("Data saved to your file.")

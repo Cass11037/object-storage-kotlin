@@ -2,6 +2,8 @@ package org.example.core
 
 import org.example.commands.*
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.*
 
 class CommandProcessor(
@@ -102,22 +104,22 @@ class CommandProcessor(
             return
         }
 
-        val file = File(filename)
-        if (!file.exists()) {
+        val path = Paths.get(filename)
+        if (!Files.exists(path)) {
             println("Error: The $filename file was not found.")
             return
         }
 
-        if (!file.canRead()) {
+        if (!Files.isReadable(path)) {
             println("Error: No rights to read the file $filename.")
             return
         }
         executedScripts.add(filename)
-        val scriptScanner = Scanner(file)
-        val originalScanner = vehicleReader.getScanner() // оригинальный scanner
+        val scriptScanner = Scanner(Files.newBufferedReader(path))
+        val originalScanner = vehicleReader.getScanner()
 
         try {
-            vehicleReader.setScanner(scriptScanner) // scanner из скрипта
+            vehicleReader.setScanner(scriptScanner)
             while (scriptScanner.hasNextLine()) {
                 val commandLine = scriptScanner.nextLine().trim()
                 if (commandLine.isNotEmpty()) {
@@ -127,9 +129,8 @@ class CommandProcessor(
             }
             println("File $filename was read.")
         } finally {
-            vehicleReader.setScanner(originalScanner) // Восстанавливаем оригинальный scanner
+            vehicleReader.setScanner(originalScanner)
             scriptScanner.close()
             executedScripts.remove(filename)
         }
-    }
-}
+    }}
