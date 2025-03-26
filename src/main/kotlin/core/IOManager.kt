@@ -1,4 +1,5 @@
-import org.example.core.*
+import org.example.core.InputManager
+import org.example.core.OutputManager
 
 class IOManager(
     private val input: InputManager,
@@ -16,5 +17,13 @@ class IOManager(
     }
     fun readLine():String{
         return input.readLine() ?: ""
+    }
+    fun outputLine(ob : Any) {
+        output.write(ob.toString())
+    }
+    fun outputLine(col: Collection<Any>) {
+        for(c in col) {
+            output.write(c.toString())
+        }
     }
 }
