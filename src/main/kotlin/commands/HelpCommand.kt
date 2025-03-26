@@ -9,7 +9,7 @@ class HelpCommand(private val commands: Map<String, CommandInterface>)  : Comman
 ){
     override fun execute(args: List<String>, collectionManager: CollectionManager) {
         if(!checkSizeOfArgs(args.size)) {
-            println("Error: Args can be size ${args.size}.")
+            println("Error: Args can be size ${size}.")
             return
         }
         println("Available Commands:")

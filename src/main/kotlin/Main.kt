@@ -21,7 +21,7 @@ fun fileReader(scanner: Scanner): String {
     var attempts = 0
     val csvRegex = "^[a-zA-Z0-9_\\-() ]+\\.csv$".toRegex()
     //функция для создания файла как обычного так и перманентного
-    fun createFile(fileName: String): String? {
+    fun createOrLoadFile(fileName: String): String? {
         return try {
             val file = File(fileName)
             when {
@@ -67,7 +67,7 @@ fun fileReader(scanner: Scanner): String {
                         }
 
                         else -> {
-                            createFile(input)?.let { return it }
+                            createOrLoadFile(input)?.let { return it }
                         }
                     }
                     attempts++
@@ -78,7 +78,7 @@ fun fileReader(scanner: Scanner): String {
                 return when {
                     file.exists() -> permanentFileName
                     else -> {
-                        createFile(permanentFileName) ?: run {
+                        createOrLoadFile(permanentFileName) ?: run {
                             println("Fatal error: Cannot create permanent file")
                             throw IllegalStateException("Permanent file creation fail")
                         }

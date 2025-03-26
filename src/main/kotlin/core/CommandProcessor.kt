@@ -20,8 +20,10 @@ class CommandProcessor(
         while (true) {
             print("> ")
             val input = scanner.nextLine().trim()
+            val executeScriptRegex = "^execute_script\\s.+\$".toRegex()
             when {
                 input == "exit" -> break
+                executeScriptRegex.matches(input) -> executeScript(input)
                 input.isEmpty() -> continue
                 else -> processCommand(input)
             }
@@ -86,7 +88,9 @@ class CommandProcessor(
             println("Error executing command: ${e.message}")
         }
     }
-    private fun executeScript(filename: String) {
+    private fun executeScript(input: String) {
+        val parts = input.split("\\s+".toRegex())
+        val filename = commands[parts[1]].toString()
         if (filename in executedScripts) {
             println("Error: Recursion detected in script execution $filename.")
             return
@@ -115,4 +119,5 @@ class CommandProcessor(
         println("File $filename was read.")
         executedScripts.remove(filename) //delete
     }
+
 }
