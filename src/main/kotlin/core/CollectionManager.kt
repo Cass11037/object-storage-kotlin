@@ -202,40 +202,7 @@ class CollectionManager(private val filename: String) {
 
     fun saveToFile(): List<String> {
         return try {
-            FileOutputStream(filename).use { fileOutputStream ->
-                OutputStreamWriter(fileOutputStream, "UTF-8").use { writer ->
-                    CSVPrinter(writer, CSVFormat.DEFAULT).use { printer ->
-                        // Запись заголовков
-                        printer.printRecord(
-                            "id",
-                            "name",
-                            "coordinatesX",
-                            "coordinatesY",
-                            "creationDate",
-                            "enginePower",
-                            "distanceTravelled",
-                            "type",
-                            "fuelType"
-                        )
-
-                        // Запись данных
-                        vehicles.forEach { vehicle ->
-                            printer.printRecord(
-                                vehicle.id,
-                                vehicle.name,
-                                vehicle.coordinates.x,
-                                vehicle.coordinates.y,
-                                vehicle.creationDate,
-                                vehicle.enginePower,
-                                vehicle.distanceTravelled,
-                                vehicle.type?.name,
-                                vehicle.fuelType?.name
-                            )
-                        }
-                    }
-                }
-            }
-            emptyList()
+            saveToFile("Collection.csv")
         } catch (e: IOException) {
             listOf("Error while saving file: ${e.message}")
         }
