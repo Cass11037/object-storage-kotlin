@@ -18,4 +18,9 @@ Vehicle1
 3000
 3930
 BOAT
-NUCLEAR
+NUCLEAR1
+
+show
+
+remove_first
+

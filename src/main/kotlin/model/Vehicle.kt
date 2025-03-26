@@ -19,8 +19,18 @@ data class Vehicle(
         distanceTravelled?.let { require(it > 0) { "Distance must be positive if provided" } }
     }
     override fun compareTo(other: Vehicle): Int {
-        return this.enginePower.compareTo(other.enginePower)
+        return this.id.compareTo(other.id)
     }
+    /*class ByEnginePowerComporator : Comparator<Vehicle> {
+        override fun compare(o1: Vehicle?, o2: Vehicle?): Int {
+            return when {
+                o1 == null && o2 == null -> 0
+                o1 == null -> -1
+                o2 == null -> 1
+                else -> o1.enginePower.compareTo(o2.enginePower)
+            }
+        }
+    }*/
     override fun toString(): String {
         return "Vehicle(id=$id, name='$name', coordinates=$coordinates, creationDate=$creationDate, " +
                 "enginePower=$enginePower, distanceTravelled=$distanceTravelled, type=$type, fuelType=$fuelType)"
