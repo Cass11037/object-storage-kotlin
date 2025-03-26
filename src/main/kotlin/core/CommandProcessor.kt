@@ -1,18 +1,17 @@
 package org.example.core
 
+import IOManager
 import org.example.commands.*
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.util.*
+
 
 class CommandProcessor(
     private var commands: Map<String, Command>,
-    private val scanner: Scanner,
+    private val ioManager: IOManager,
     fileName: String
 ) {
     private lateinit var vehicleReader: VehicleReader
 
-    constructor(scanner: Scanner, fileName: String) : this(emptyMap(), scanner, fileName)
+    constructor(ioManager: IOManager, fileName: String) : this(emptyMap(), ioManager, fileName)
 
     val collectionManager = CollectionManager(fileName)
     private val executedScripts =
@@ -20,15 +19,15 @@ class CommandProcessor(
 
     fun start() {
         if (commands.isEmpty()) commands = loadCommands()
-        println("Transport manager 3000")
-        commands["help"]?.execute(emptyList(), collectionManager,)
+        ioManager.outputLine("Transport manager 3000")
+        commands["help"]?.execute(emptyList(), collectionManager)
         while (true) {
             print("> ")
-            val input = scanner.nextLine().trim()
+            val input = ioManager.readLine().trim()
             val executeScriptRegex = "^execute_script\\s.+\$".toRegex()
             when {
                 input == "exit" -> break
-                executeScriptRegex.matches(input) -> executeScript(input)
+               // executeScriptRegex.matches(input) -> executeScript(input)
                 input.isEmpty() -> continue
                 else -> processCommand(input)
             }
@@ -36,7 +35,7 @@ class CommandProcessor(
     }
 
     private fun loadCommands(): Map<String, Command> {
-        vehicleReader = VehicleReader(scanner)
+        vehicleReader = VehicleReader(ioManager)
         val commands = listOf(
             AddCommand(vehicleReader),
             AddIfMaxCommand(vehicleReader),
@@ -77,21 +76,21 @@ class CommandProcessor(
     private fun processCommand(input: String) {
         val parts = input.split("\\s+".toRegex())
         val command = commands[parts[0]] ?: run {
-            println("Unknown command: ${parts[0]}")
+            ioManager.outputLine("Unknown command: ${parts[0]}")
             return
         }
         if (command.getName() == "execute_script") {
             if (parts.isEmpty()) {
-                println("Error: The file name is not specified.")
+                ioManager.outputLine("Error: The file name is not specified.")
                 return
             }
-            executeScript(parts[0])
+            //executeScript(parts[0])
             return
         }
         try {
-            command.execute(parts.drop(1), collectionManager,)
+            command.execute(parts.drop(1), collectionManager)
         } catch (e: Exception) {
-            println("Error executing command: ${e.message}")
+            ioManager.outputLine("Error executing command: ${e.message}")
         }
     }
 
@@ -99,37 +98,37 @@ class CommandProcessor(
         val parts = input.split("\\s+".toRegex())
         val filename = parts[1]
         if (filename in executedScripts) {
-            println("Error: Recursion detected in script execution $filename.")
+            ioManager.outputLine("Error: Recursion detected in script execution $filename.")
             return
         }
 
         val path = Paths.get(filename)
         if (!Files.exists(path)) {
-            println("Error: The $filename file was not found.")
+            ioManager.outputLine("Error: The $filename file was not found.")
             return
         }
 
         if (!Files.isReadable(path)) {
-            println("Error: No rights to read the file $filename.")
+            ioManager.outputLine("Error: No rights to read the file $filename.")
             return
         }
         executedScripts.add(filename)
-        val scriptScanner = Scanner(Files.newBufferedReader(path))
-        val originalScanner = vehicleReader.getScanner()
+        val scriptIOManager = IOManager(Files.newBufferedReader(path))
+        val originalIOManager = vehicleReader.getIOManager()
 
         try {
-            vehicleReader.setScanner(scriptScanner)
-            while (scriptScanner.hasNextLine()) {
-                val commandLine = scriptScanner.nextLine().trim()
+            vehicleReader.setIOManager(scriptIOManager)
+            while (scriptIOManager.hasNextLine()) {
+                val commandLine = scriptIOManager.readLine().trim()
                 if (commandLine.isNotEmpty()) {
-                    println("> $commandLine")
+                    ioManager.outputLine("> $commandLine")
                     processCommand(commandLine)
                 }
             }
-            println("File $filename was read.")
+            ioManager.outputLine("File $filename was read.")
         } finally {
-            vehicleReader.setScanner(originalScanner)
-            scriptScanner.close()
+            vehicleReader.setIOManager(originalIOManager)
             executedScripts.remove(filename)
         }
-    }}
+    }
+}

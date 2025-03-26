@@ -102,7 +102,6 @@ fun main() {
         ConsoleInputManager(),
         ConsoleOutputManager()
     )
-    val scanner = Scanner(System.`in`)
     val fileName = fileReader(ioManager)
-    CommandProcessor(scanner, fileName).start()
+    CommandProcessor(ioManager, fileName).start()
 }
