@@ -2,17 +2,21 @@ package org.example.core
 
 import IOManager
 import org.example.model.*
+import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.NoSuchElementException
 
 class VehicleReader(private var ioManager: IOManager) {
     private val validInputs = listOf("name", "coordinates", "enginePower", "distanceTravelled", "type", "fuelType")
+
     companion object {
-        private var nextId = 1 // Общая переменная для всех экземпляров
-        fun clearId () {
-            nextId = 1
-        }
+        private val idCounter = AtomicInteger(1)
+        fun clearId() = idCounter.set(1)
     }
+
+
     fun readUpdatesForVehicle(vehicle: Vehicle) {
-        ioManager.outputLine("You can change: ${validInputs.joinToString(", ")}." )
+        ioManager.outputLine("You can change: ${validInputs.joinToString(", ")}.")
         ioManager.outputLine("What do you want to change? > ")
         val input = ioManager.readLine()
         if (input in validInputs) {
@@ -25,16 +29,20 @@ class VehicleReader(private var ioManager: IOManager) {
                     "type" -> vehicle.type = readEnum("Vehicle type", VehicleType::class.java)
                     "fuelType" -> readEnum("Fuel type", FuelType::class.java)
                 }
-            } catch (e: Exception) {
-                ioManager.outputLine("Input error: ${e.message}. Please try again.")
+            } catch (e: IllegalArgumentException) {
+                ioManager.error("Validation error: ${e.message}")
+            }
+            catch (e: InputMismatchException) {
+                ioManager.error("Format error: ${e.message}")
             }
         } else {
             ioManager.outputLine("Wrong input. Please enter one of these commands: ${validInputs.joinToString(", ")}.")
         }
     }
+
     fun readVehicle(): Vehicle {
         return Vehicle(
-            id = nextId++,  // Временное значение
+            id = idCounter.getAndIncrement(),  // Временное значение
             name = readNonEmptyString("Vehicle name"),
             coordinates = readCoordinates(),
             creationDate = System.currentTimeMillis(),
@@ -51,6 +59,7 @@ class VehicleReader(private var ioManager: IOManager) {
             y = readBoundedFloat("Coordinate Y", max = 922f)
         )
     }
+
     private fun readNonEmptyString(prompt: String): String {
         while (true) {
             ioManager.outputInline("$prompt: ")
@@ -73,19 +82,21 @@ class VehicleReader(private var ioManager: IOManager) {
             }
         }
     }
-    private fun readBoundedFloat(prompt: String,min: Float = Float.MIN_VALUE, max: Float): Float {
+
+    private fun readBoundedFloat(prompt: String, min: Float = -Float.MAX_VALUE, max: Float): Float {
         while (true) {
             ioManager.outputInline("$prompt (max. $max): ")
             val input = ioManager.readLine()
             try {
                 val value = input.toFloat()
-                if (value in min.. max) return value
+                if (value in min..max) return value
                 ioManager.outputLine("Value must be in range $min to $max")
             } catch (e: NumberFormatException) {
                 ioManager.outputLine("Incorrect value!")
             }
         }
     }
+
     private fun readPositiveDouble(prompt: String): Double {
         while (true) {
             ioManager.outputInline("$prompt: ")
@@ -99,6 +110,7 @@ class VehicleReader(private var ioManager: IOManager) {
             }
         }
     }
+
     private fun readOptionalDouble(prompt: String): Double? {
         ioManager.outputInline("$prompt (leave empty if no value): ")
         val input = ioManager.readLine().trim()
@@ -114,6 +126,7 @@ class VehicleReader(private var ioManager: IOManager) {
             }
         }
     }
+
     private inline fun <reified T : Enum<T>> readEnum(prompt: String, enumClass: Class<T>): T? {
         val values = enumClass.enumConstants.joinToString { it.name }
         ioManager.outputLine("$prompt (available values: $values)")
@@ -128,11 +141,9 @@ class VehicleReader(private var ioManager: IOManager) {
             }
         }
     }
-    fun setIOManager(newIOManager: IOManager) {
-        ioManager = newIOManager
-    }
 
-    fun getIOManager(): IOManager {
-        return ioManager
+    fun getIOManager(): IOManager = ioManager
+    fun setIOManager(newIO: IOManager) {
+        this.ioManager = newIO
     }
 }

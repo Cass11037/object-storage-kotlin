@@ -3,6 +3,7 @@ package org.example.core
 import IOManager
 import org.example.commands.*
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 
 
@@ -16,6 +17,8 @@ class CommandProcessor(
     constructor(ioManager: IOManager, fileName: String) : this(emptyMap(), ioManager, fileName)
 
     val collectionManager = CollectionManager(fileName)
+    private val maxRecursionDepth = 5
+    private var recursionDepth = 0
     private val executedScripts =
         mutableSetOf<String>() // protection against recursion & may be a file reading in the file
 
@@ -29,7 +32,7 @@ class CommandProcessor(
             val executeScriptRegex = "^execute_script\\s.+\$".toRegex()
             when {
                 input == "exit" -> break
-               // executeScriptRegex.matches(input) -> executeScript(input)
+                executeScriptRegex.matches(input) -> executeScript(input)
                 input.isEmpty() -> continue
                 else -> processCommand(input)
             }
@@ -86,7 +89,7 @@ class CommandProcessor(
                 ioManager.outputLine("Error: The file name is not specified.")
                 return
             }
-            //executeScript(parts[0])
+            executeScript(parts[0])
             return
         }
         try {
@@ -98,39 +101,74 @@ class CommandProcessor(
 
     private fun executeScript(input: String) {
         val parts = input.split("\\s+".toRegex())
+        if (parts.size < 2) {
+            ioManager.error("Syntax: execute_script <filename>")
+            return
+        }
+
         val filename = parts[1]
         if (filename in executedScripts) {
-            ioManager.outputLine("Error: Recursion detected in script execution $filename.")
+            ioManager.error("Recursion detected: $filename")
             return
+        }
+
+        if (recursionDepth >= maxRecursionDepth) {
+            throw StackOverflowError("Max script recursion depth ($maxRecursionDepth) exceeded")
         }
 
         val path = Paths.get(filename)
         if (!Files.exists(path)) {
-            ioManager.outputLine("Error: The $filename file was not found.")
+            ioManager.error("File not found: $filename")
             return
         }
 
         if (!Files.isReadable(path)) {
-            ioManager.outputLine("Error: No rights to read the file $filename.")
+            ioManager.error("Access denied: $filename")
             return
         }
+
+        recursionDepth++
         executedScripts.add(filename)
-        val scriptIOManager = IOManager(Files.newBufferedReader(path))
-        val originalIOManager = vehicleReader.getIOManager()
+        try {
+            processScriptFile(path)
+        } catch (e: Exception) {
+            ioManager.error("Script error: ${e.message}")
+        } finally {
+            executedScripts.remove(filename)
+            recursionDepth--
+        }
+    }
+
+    private fun processScriptFile(path: Path) {
+        val scriptInput = object : InputManager {
+            val reader = Files.newBufferedReader(path)
+            override fun readLine(): String? = reader.readLine()
+            override fun hasInput(): Boolean = reader.ready()
+        }
+
+        val scriptIO = IOManager(
+            scriptInput,
+            object : OutputManager {
+                override fun write(text: String) = ioManager.outputInline(text)
+                override fun writeLine(text: String) = ioManager.outputLine(text)
+                override fun error(text: String) = ioManager.error("SCRIPT: $text")
+            }
+        )
+
+        val originalIO = vehicleReader.getIOManager()
+        vehicleReader.setIOManager(scriptIO)
 
         try {
-            vehicleReader.setIOManager(scriptIOManager)
-            while (scriptIOManager.hasNextLine()) {
-                val commandLine = scriptIOManager.readLine().trim()
-                if (commandLine.isNotEmpty()) {
-                    ioManager.outputLine("> $commandLine")
-                    processCommand(commandLine)
+            while (scriptInput.hasInput()) {
+                val line = scriptIO.readLine().trim()
+                if (line.isNotEmpty()) {
+                    ioManager.outputLine("[Script]> $line")
+                    processCommand(line)
                 }
             }
-            ioManager.outputLine("File $filename was read.")
         } finally {
-            vehicleReader.setIOManager(originalIOManager)
-            executedScripts.remove(filename)
+            vehicleReader.setIOManager(originalIO)
+            (scriptInput as? AutoCloseable)?.close()
         }
     }
 }
