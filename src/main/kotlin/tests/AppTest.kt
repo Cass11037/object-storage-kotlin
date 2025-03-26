@@ -31,30 +31,30 @@ class AppTest {
         val helpCommand = spyk(object : Command("name", "description", 0) {
             override fun getName(): String = "help"
             override fun getDescription(): String = "Help command"
-            override fun execute(args: List<String>, collectionManager: CollectionManager) {
+            override fun execute(args: List<String>, collectionManager: CollectionManager, ioManager: IOManager) {
                 println("Help executed")
             }
         })
         val commands = mapOf("help" to helpCommand)
         val processor = CommandProcessor(commands, scanner, testFilename)
         processor.start()
-        verify(exactly = 1) { helpCommand.execute(emptyList(), any()) }
+        verify(exactly = 1) { helpCommand.execute(emptyList(), any(),) }
     }
 
     // 2. Если введена корректная команда, то она должна выполняться с переданными аргументами
     @Test
     fun processCommandValidCommandTest() {
         val mockCommand = spyk(object : Command("test", "desc", 2) {
-            override fun execute(args: List<String>, collectionManager: CollectionManager) {
+            override fun execute(args: List<String>, collectionManager: CollectionManager, ioManager: IOManager) {
                 println("Executed with args: $args")
             }
         })
         val commands = mapOf("test" to mockCommand)
         val scanner = Scanner("test arg1 arg2\nexit\n")
         val processor = CommandProcessor(commands, scanner, "dummy.csv")
-        every { mockCommand.execute(any(), any()) } just Runs
+        every { mockCommand.execute(any(), any(),) } just Runs
         processor.start()
-        verify { mockCommand.execute(listOf("arg1", "arg2"), processor.collectionManager) }
+        verify { mockCommand.execute(listOf("arg1", "arg2"), processor.collectionManager,) }
     }
 
     // 3. Проверка добавления транспортного средства и поиска по id
@@ -82,7 +82,7 @@ class AppTest {
     fun testSaveCommand() {
         val collectionManager = spyk(CollectionManager(testFilename))
         val saveCommand = SaveCommand()
-        saveCommand.execute(emptyList(), collectionManager)
+        saveCommand.execute(emptyList(), collectionManager,)
         verify { collectionManager.saveToFile() }
     }
 
@@ -96,7 +96,7 @@ class AppTest {
         val ps = PrintStream(baos)
         System.setOut(ps)
         val showCommand = ShowCommand()
-        showCommand.execute(emptyList(), collectionManager)
+        showCommand.execute(emptyList(), collectionManager,)
         // Восстанавливаем оригинальный System.out
         System.out.flush()
         System.setOut(originalOut)
@@ -113,9 +113,9 @@ class AppTest {
         val commands = mapOf("test" to mockCommand)
         val scanner = Scanner("test arg1 arg2\nexit")
         val commandProcessor = CommandProcessor(commands, scanner, "test.csv")
-        every { mockCommand.execute(any(), any()) } just Runs
+        every { mockCommand.execute(any(), any(),) } just Runs
         commandProcessor.start()
-        verify { mockCommand.execute(listOf("arg1", "arg2"), commandProcessor.collectionManager) }
+        verify { mockCommand.execute(listOf("arg1", "arg2"), commandProcessor.collectionManager,) }
     }
 
     // 7. При пустой коллекции выводится сообщение "Коллекция пуста"
@@ -126,7 +126,7 @@ class AppTest {
         val baos = ByteArrayOutputStream()
         System.setOut(PrintStream(baos))
         val infoCommand = InfoCommand()
-        infoCommand.execute(emptyList(), collectionManager)
+        infoCommand.execute(emptyList(), collectionManager,)
         System.out.flush()
         System.setOut(originalOut)
         val output = baos.toString()
@@ -165,7 +165,7 @@ class AppTest {
         System.setOut(PrintStream(baos))
 
         val filterCommand = FilterByEnginePowerCommand()
-        filterCommand.execute(listOf("200.0"), collectionManager)
+        filterCommand.execute(listOf("200.0"), collectionManager,)
 
         System.out.flush()
         System.setOut(originalOut)
@@ -192,7 +192,7 @@ class AppTest {
         collectionManager.addVehicle(vehicle)
         assertTrue(collectionManager.size() > 0)
         val clearCommand = ClearCommand()
-        clearCommand.execute(emptyList(), collectionManager)
+        clearCommand.execute(emptyList(), collectionManager,)
         assertTrue(collectionManager.isEmpty())
     }
 
@@ -230,7 +230,7 @@ class AppTest {
         val addIfMaxCommand = AddIfMaxCommand(vehicleReader)
 
         // Выполняем команду
-        addIfMaxCommand.execute(emptyList(), collectionManager)
+        addIfMaxCommand.execute(emptyList(), collectionManager,)
 
         // Проверяем, что в коллекции теперь 2 элемента
         assertEquals(2, collectionManager.size())
