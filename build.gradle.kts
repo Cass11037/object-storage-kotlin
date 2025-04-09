@@ -19,8 +19,12 @@ dependencies {
     implementation("org.junit.jupiter:junit-jupiter:5.9.2")
     implementation("io.mockk:mockk:1.13.5")
     implementation("org.apache.commons:commons-csv:1.10.0")
-    implementation(kotlin("test"))
     implementation("ch.qos.logback:logback-classic:1.4.12")
+    implementation("io.mockk:mockk:1.13.8")
+    implementation(kotlin("test"))
+    implementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
+    runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+    implementation("org.assertj:assertj-core:3.24.2")
 }
 
 tasks.test {

@@ -179,4 +179,10 @@ class CommandProcessor(
             ioManager.error("Неполные данные для команды add в скрипте")
         }
     }
+    fun getCommands(): Map<String, Command> {
+        return commands
+    }
+    fun setCommands(com: Map<String, Command>) {
+         commands=com
+    }
 }
