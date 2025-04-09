@@ -8,11 +8,14 @@ class AddCommand(
     private val reader: VehicleReader
 ) : Command("add", "Add new vehicle to collection", 0) {
     override fun execute(args: List<String>, collectionManager: CollectionManager, ioManager: IOManager) {
-        if(!checkSizeOfArgs(args.size)) {
-            ioManager.outputLine("Error: Args can be size ${size}.")
-            return
+        if (args.size == 7) {
+            val vehicle = reader.readVehicleFromScript(args)
+            collectionManager.addVehicle(vehicle)
+            ioManager.outputLine("Vehicle added from script with ID: ${vehicle.id}")
+        } else {
+            val vehicle = reader.readVehicle()
+            collectionManager.addVehicle(vehicle)
+            ioManager.outputLine("Vehicle added interactively with ID: ${vehicle.id}")
         }
-        val vehicle = collectionManager.addVehicle(reader.readVehicle())
-        ioManager.outputLine("Vehicle added with ID: ${vehicle.id}")
     }
 }

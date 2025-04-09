@@ -2,8 +2,8 @@ import org.example.core.InputManager
 import org.example.core.OutputManager
 
 class IOManager(
-    private val input: InputManager,
-    private val output: OutputManager
+    private var input: InputManager,
+    private var output: OutputManager
 ) {
     fun outputLine(prompt: String){
         output.write(prompt+'\n')
@@ -26,6 +26,7 @@ class IOManager(
     fun error(message: String) {
         output.error(message)
     }
-
+    fun getInput(): InputManager{ return input}
+    fun setInput(inp: InputManager){input=inp}
     fun hasNextLine(): Boolean = input.hasInput()
 }

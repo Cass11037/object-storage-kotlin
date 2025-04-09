@@ -27,7 +27,7 @@ class CommandProcessor(
         ioManager.outputLine("Transport manager 3000")
         commands["help"]?.execute(emptyList(), collectionManager, ioManager)
         while (true) {
-            print("> ")
+            ioManager.outputInline("> ")
             val input = ioManager.readLine().trim()
             val executeScriptRegex = "^execute_script\\s.+\$".toRegex()
             when {
@@ -116,7 +116,7 @@ class CommandProcessor(
             throw StackOverflowError("Max script recursion depth ($maxRecursionDepth) exceeded")
         }
 
-        val path = Paths.get(filename)
+        val path = Paths.get(filename) //TODO норм или нет
         if (!Files.exists(path)) {
             ioManager.error("File not found: $filename")
             return
@@ -140,35 +140,43 @@ class CommandProcessor(
     }
 
     private fun processScriptFile(path: Path) {
+        val originalInput = ioManager.getInput()
         val scriptInput = object : InputManager {
-            val reader = Files.newBufferedReader(path)
+            private val reader = Files.newBufferedReader(path)
             override fun readLine(): String? = reader.readLine()
             override fun hasInput(): Boolean = reader.ready()
         }
-
-        val scriptIO = IOManager(
-            scriptInput,
-            object : OutputManager {
-                override fun write(text: String) = ioManager.outputInline(text)
-                override fun writeLine(text: String) = ioManager.outputLine(text)
-                override fun error(text: String) = ioManager.error("SCRIPT: $text")
-            }
-        )
-
-        val originalIO = vehicleReader.getIOManager()
-        vehicleReader.setIOManager(scriptIO)
+        ioManager.setInput(scriptInput)
 
         try {
-            while (scriptInput.hasInput()) {
-                val line = scriptIO.readLine().trim()
+            while (ioManager.hasNextLine()) {
+                val line = ioManager.readLine()?.trim() ?: continue
                 if (line.isNotEmpty()) {
                     ioManager.outputLine("[Script]> $line")
-                    processCommand(line)
+                    when {
+                        line.startsWith("add", ignoreCase = true) -> processAddCommandInScript()
+                        else -> processCommand(line)
+                    }
                 }
             }
         } finally {
-            vehicleReader.setIOManager(originalIO)
-            (scriptInput as? AutoCloseable)?.close()
+            ioManager.setInput(originalInput)
+        }
+    }
+
+    private fun processAddCommandInScript() {
+        val vehicleData = mutableListOf<String>()
+        while (ioManager.hasNextLine() && vehicleData.size < 7) {
+            val line = ioManager.readLine()?.trim()
+            if (line != null && line.isNotEmpty()) {
+                vehicleData.add(line)
+            }
+        }
+        if (vehicleData.size == 7) {
+            val fullCommand = "add\n${vehicleData.joinToString("\n")}"
+            processCommand(fullCommand)
+        } else {
+            ioManager.error("Неполные данные для команды add в скрипте")
         }
     }
 }

@@ -146,4 +146,16 @@ class VehicleReader(private var ioManager: IOManager) {
     fun setIOManager(newIO: IOManager) {
         this.ioManager = newIO
     }
+    fun readVehicleFromScript(data: List<String>): Vehicle {
+        return Vehicle(
+            id = idCounter.getAndIncrement(),
+            name = data[0],
+            coordinates = Coordinates(data[1].toInt(), data[2].toFloat()),
+            creationDate = System.currentTimeMillis(),
+            enginePower = data[3].toDouble(),
+            distanceTravelled = data[4].toDoubleOrNull(),
+            type = VehicleType.valueOf(data[5]),
+            fuelType = FuelType.valueOf(data[6])
+        )
+    }
 }
