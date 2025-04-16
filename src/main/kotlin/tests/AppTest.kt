@@ -1,240 +1,276 @@
-package org.example.tests
-
 import io.mockk.*
 import org.example.commands.*
-import org.example.core.CollectionManager
-import org.example.core.CommandProcessor
-import org.example.core.VehicleReader
+import org.example.core.*
 import org.example.model.*
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.PrintStream
-import java.util.Scanner
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class AppTest {
-    private val testFilename = "test_data.csv"
 
-    @BeforeEach
-    fun setup() {
-        File(testFilename).delete()
-    }
-
-    // 1. При старте CommandProcessor должна быть выполнена команда help
+    // Тест для проверки сравнения Vehicle
     @Test
-    fun testHelpCommandExecutedOnStart() {
-        val scanner = Scanner("name\nexit\n")
-        val helpCommand = spyk(object : Command("name", "description", 0) {
-            override fun getName(): String = "help"
-            override fun getDescription(): String = "Help command"
-            override fun execute(args: List<String>, collectionManager: CollectionManager) {
-                println("Help executed")
-            }
-        })
-        val commands = mapOf("help" to helpCommand)
-        val processor = CommandProcessor(commands, scanner, testFilename)
-        processor.start()
-        verify(exactly = 1) { helpCommand.execute(emptyList(), any()) }
-    }
-
-    // 2. Если введена корректная команда, то она должна выполняться с переданными аргументами
-    @Test
-    fun processCommandValidCommandTest() {
-        val mockCommand = spyk(object : Command("test", "desc", 2) {
-            override fun execute(args: List<String>, collectionManager: CollectionManager) {
-                println("Executed with args: $args")
-            }
-        })
-        val commands = mapOf("test" to mockCommand)
-        val scanner = Scanner("test arg1 arg2\nexit\n")
-        val processor = CommandProcessor(commands, scanner, "dummy.csv")
-        every { mockCommand.execute(any(), any()) } just Runs
-        processor.start()
-        verify { mockCommand.execute(listOf("arg1", "arg2"), processor.collectionManager) }
-    }
-
-    // 3. Проверка добавления транспортного средства и поиска по id
-    @Test
-    fun testAddVehicleAndGetById() {
-        val collectionManager = CollectionManager(testFilename)
-        val vehicle = Vehicle(
-            id = 0,
-            name = "Test Vehicle",
-            coordinates = Coordinates(10, 10f),
+    fun testVehicleComparison() {
+        val vehicle1 = Vehicle(
+            id = 1,
+            name = "A",
+            coordinates = Coordinates(10, 20f),
             creationDate = System.currentTimeMillis(),
             enginePower = 100.0,
-            distanceTravelled = null,
-            type = VehicleType.BOAT,
+            distanceTravelled = 1000.0,
+            type = VehicleType.HOVERBOARD,
             fuelType = FuelType.DIESEL
-        )
-        collectionManager.addVehicle(vehicle)
-        val added = collectionManager.getById(1)
-        assertNotNull(added)
-        assertEquals("Test Vehicle", added?.name)
-    }
-
-    // 4. Проверка вызова метода saveToFile у CollectionManager
-    @Test
-    fun testSaveCommand() {
-        val collectionManager = spyk(CollectionManager(testFilename))
-        val saveCommand = SaveCommand()
-        saveCommand.execute(emptyList(), collectionManager)
-        verify { collectionManager.saveToFile() }
-    }
-
-    // 5. При пустой коллекции должен выводиться соответствующий текст
-    @Test
-    fun testShowCommandEmptyCollection() {
-        val collectionManager = CollectionManager(testFilename) // коллекция пустая
-        //System.out в ByteArrayOutputStream
-        val originalOut = System.out
-        val baos = ByteArrayOutputStream()
-        val ps = PrintStream(baos)
-        System.setOut(ps)
-        val showCommand = ShowCommand()
-        showCommand.execute(emptyList(), collectionManager)
-        // Восстанавливаем оригинальный System.out
-        System.out.flush()
-        System.setOut(originalOut)
-        val output = baos.toString()
-        assertTrue(output.contains("Collection is empty."))
-    }
-
-    //6. Проверка работы processCommand
-    @Test
-    fun processCommandCorrectnessTest () {
-        val mockCommand = mockk<Command> {
-            every { getName() } returns "test"
-        }
-        val commands = mapOf("test" to mockCommand)
-        val scanner = Scanner("test arg1 arg2\nexit")
-        val commandProcessor = CommandProcessor(commands, scanner, "test.csv")
-        every { mockCommand.execute(any(), any()) } just Runs
-        commandProcessor.start()
-        verify { mockCommand.execute(listOf("arg1", "arg2"), commandProcessor.collectionManager) }
-    }
-
-    // 7. При пустой коллекции выводится сообщение "Коллекция пуста"
-    @Test
-    fun testInfoCommandEmptyCollection() {
-        val collectionManager = CollectionManager(testFilename)
-        val originalOut = System.out
-        val baos = ByteArrayOutputStream()
-        System.setOut(PrintStream(baos))
-        val infoCommand = InfoCommand()
-        infoCommand.execute(emptyList(), collectionManager)
-        System.out.flush()
-        System.setOut(originalOut)
-        val output = baos.toString()
-        assertTrue(output.contains("Collection is empty"))
-    }
-
-    //8. Тест фильтрации по мощности двигателя
-    @Test
-    fun testFilterByEnginePowerCommand() {
-        val collectionManager = CollectionManager(testFilename)
-        val vehicle1 = Vehicle(
-            id = 0,
-            name = "Car A",
-            coordinates = Coordinates(1, 1f),
-            creationDate = System.currentTimeMillis(),
-            enginePower = 150.0,
-            distanceTravelled = null,
-            type = VehicleType.BICYCLE,
-            fuelType = FuelType.ALCOHOL
         )
         val vehicle2 = Vehicle(
-            id = 0,
-            name = "Car B",
-            coordinates = Coordinates(2, 2f),
+            id = 2,
+            name = "B",
+            coordinates = Coordinates(20, 30f),
             creationDate = System.currentTimeMillis(),
             enginePower = 200.0,
-            distanceTravelled = null,
+            distanceTravelled = 2000.0,
             type = VehicleType.HOVERBOARD,
             fuelType = FuelType.NUCLEAR
         )
-        collectionManager.addVehicle(vehicle1)
-        collectionManager.addVehicle(vehicle2)
 
-        val originalOut = System.out
-        val baos = ByteArrayOutputStream()
-        System.setOut(PrintStream(baos))
-
-        val filterCommand = FilterByEnginePowerCommand()
-        filterCommand.execute(listOf("200.0"), collectionManager)
-
-        System.out.flush()
-        System.setOut(originalOut)
-        val output = baos.toString()
-
-        assertTrue(output.contains("Car B"))
+        assertTrue(vehicle1 < vehicle2)
+        assertTrue(vehicle2 > vehicle1)
+        assertEquals(0, vehicle1.compareTo(vehicle1))
     }
 
-
-    // 9. Тест ClearCommand, после вызова команда коллекция должна быть пустой
+    // Тест для проверки работы с enum
     @Test
-    fun testClearCommand() {
-        val collectionManager = CollectionManager(testFilename)
+    fun testVehicleEnums() {
         val vehicle = Vehicle(
-            id = 0,
-            name = "ToClear",
-            coordinates = Coordinates(5, 5f),
+            id = 1,
+            name = "EnumTest",
+            coordinates = Coordinates(10, 20f),
             creationDate = System.currentTimeMillis(),
             enginePower = 100.0,
-            distanceTravelled = null,
+            distanceTravelled = 1000.0,
             type = VehicleType.BOAT,
-            fuelType = FuelType.DIESEL
-        )
-        collectionManager.addVehicle(vehicle)
-        assertTrue(collectionManager.size() > 0)
-        val clearCommand = ClearCommand()
-        clearCommand.execute(emptyList(), collectionManager)
-        assertTrue(collectionManager.isEmpty())
-    }
-
-    // 10. Проверка AddIfMax
-    @Test
-    fun testAddIfMaxCommandAddsNewVehicleWhenItIsMax() {
-        val collectionManager = CollectionManager(testFilename)
-        val existingVehicle = Vehicle(
-            id = 0,
-            name = "Existing",
-            coordinates = Coordinates(10, 10f),
-            creationDate = System.currentTimeMillis(),
-            enginePower = 150.0,
-            distanceTravelled = null,
-            type = VehicleType.BOAT,
-            fuelType = FuelType.DIESEL
-        )
-        collectionManager.addVehicle(existingVehicle)
-
-        // Мокаем VehicleReader, чтобы вернуть новый транспорт с большим enginePower (200)
-        val vehicleReader = mockk<VehicleReader>()
-        val newVehicle = Vehicle(
-            id = 0,
-            name = "NewMax",
-            coordinates = Coordinates(20, 20f),
-            creationDate = System.currentTimeMillis(),
-            enginePower = 200.0,
-            distanceTravelled = null,
-            type = VehicleType.HOVERBOARD,
             fuelType = FuelType.NUCLEAR
         )
-        every { vehicleReader.readVehicle() } returns newVehicle
 
-        // Создаем команду AddIfMaxCommand с замоканным VehicleReader
-        val addIfMaxCommand = AddIfMaxCommand(vehicleReader)
+        assertEquals(VehicleType.BOAT, vehicle.type)
+        assertEquals(FuelType.NUCLEAR, vehicle.fuelType)
+        assertEquals("BOAT", vehicle.type?.name)
+        assertEquals("NUCLEAR", vehicle.fuelType?.name)
+    }
 
-        // Выполняем команду
-        addIfMaxCommand.execute(emptyList(), collectionManager)
+    @Test
+    fun testUpdateIdCommand() {
+        val mockIO = mockk<IOManager>()
+        val mockCollection = mockk<CollectionManager>()
+        val mockReader = mockk<VehicleReader>()
 
-        // Проверяем, что в коллекции теперь 2 элемента
-        assertEquals(2, collectionManager.size())
-        val addedVehicle = collectionManager.getAll().find { it.name == "NewMax" }
-        assertNotNull(addedVehicle)
+        val command = UpdateIdCommand(mockReader)
+        val vehicle = Vehicle(
+            id = 1,
+            name = "Car",
+            coordinates = Coordinates(10, 20f),
+            creationDate = System.currentTimeMillis(),
+            enginePower = 150.0,
+            distanceTravelled = 1000.0,
+            type = VehicleType.BICYCLE,
+            fuelType = FuelType.DIESEL
+        )
+
+        every { mockCollection.getById(1) } returns vehicle
+        every { mockReader.readUpdatesForVehicle(vehicle) } just Runs
+        every { mockIO.outputLine(any<String>()) } just Runs
+
+        command.execute(listOf("1"), mockCollection, mockIO)
+
+        verify(exactly = 1) { mockReader.readUpdatesForVehicle(vehicle) }
+        verify(exactly = 1) { mockIO.outputLine("Vehicle 1 was updated.") }
+    }
+
+    //Команда HelpCommand выводит список доступных команд. Мы будем мокировать IOManager для проверки корректности вывода
+    @Test
+    fun testHelpCommand() {
+        val mockIO = mockk<IOManager>()
+        val commands = mapOf(
+            "add" to AddCommand(mockk()),
+            "info" to InfoCommand(),
+            "help" to HelpCommand(emptyMap())
+        )
+
+        val command = HelpCommand(commands)
+        every { mockIO.outputLine(any<String>()) } just Runs
+
+        command.execute(emptyList(), mockk(), mockIO)
+
+        verify(exactly = 1) { mockIO.outputLine("Available Commands:") }
+        verify(exactly = 1) { mockIO.outputLine("add - Add new vehicle to collection") }
+        verify(exactly = 1) { mockIO.outputLine("info - Displays project information.") }
+        verify(exactly = 1) { mockIO.outputLine("help - Display a list of all available commands.") }
+        verify(exactly = 1) { mockIO.outputLine("execute_script <filename>: executes a script from a file.") }
+        verify(exactly = 1) { mockIO.outputLine("exit : Exits the program without saving.") }
+    }
+    // Тест для удаления транспортного средства по ID
+    @Test
+    fun testRemoveById() {
+        val manager = CollectionManager("test.csv")
+        val vehicle = Vehicle(
+            id = 1,
+            name = "BOAT",
+            coordinates = Coordinates(10, 20f),
+            creationDate = System.currentTimeMillis(),
+            enginePower = 150.0,
+            distanceTravelled = 3000.0,
+            type = VehicleType.BICYCLE,
+            fuelType = FuelType.DIESEL
+        )
+
+        manager.addVehicle(vehicle)
+        assertEquals(1, manager.size())
+
+        manager.deleteElement(1)
+        assertEquals(0, manager.size())
+        assertNull(manager.getById(1))
+    }
+
+    // Тест для команды SaveCommand
+    @Test
+    fun testSaveCommand() {
+        val mockIO = mockk<IOManager>()
+        val mockCollection = mockk<CollectionManager>()
+
+        val command = SaveCommand()
+        every { mockCollection.saveToFile() } returns emptyList()
+        every { mockIO.outputLine(any<String>()) } just Runs
+
+        command.execute(emptyList(), mockCollection, mockIO)
+
+        verify { mockCollection.saveToFile() }
+        verify { mockIO.outputLine("Data saved to your file.") }
+    }
+
+
+    // Тест для фильтрации по мощности двигателя
+    @Test
+    fun testFilterByEnginePower() {
+        val manager = CollectionManager("test.csv")
+        val vehicle1 = Vehicle(
+            id = 1,
+            name = "Car1",
+            coordinates = Coordinates(10, 20f),
+            creationDate = System.currentTimeMillis(),
+            enginePower = 100.0,
+            distanceTravelled = 1000.0,
+            type = VehicleType.HOVERBOARD,
+            fuelType = FuelType.DIESEL
+        )
+        val vehicle2 = Vehicle(
+            id = 2,
+            name = "Car2",
+            coordinates = Coordinates(20, 30f),
+            creationDate = System.currentTimeMillis(),
+            enginePower = 200.0,
+            distanceTravelled = 2000.0,
+            type = VehicleType.BOAT,
+            fuelType = FuelType.DIESEL
+        )
+
+        manager.addVehicle(vehicle1)
+        manager.addVehicle(vehicle2)
+
+        val filtered = manager.filterByCharacteristic("enginePower", "200.0")
+        assertEquals(1, filtered.size)
+        assertEquals("Car2", filtered[0].name)
+    }
+
+
+    // Тест для валидации Vehicle
+    @Test
+    fun testVehicleValidation() {
+        assertFailsWith<IllegalArgumentException> {
+            Vehicle(
+                id = -1, // Невалидный ID
+                name = "Test",
+                coordinates = Coordinates(10, 20f),
+                creationDate = System.currentTimeMillis(),
+                enginePower = 100.0,
+                distanceTravelled = 1000.0,
+                type = VehicleType.BOAT,
+                fuelType = FuelType.DIESEL
+            )
+        }
+
+        assertFailsWith<IllegalArgumentException> {
+            Vehicle(
+                id = 1,
+                name = "", // Пустое имя
+                coordinates = Coordinates(10, 20f),
+                creationDate = System.currentTimeMillis(),
+                enginePower = 100.0,
+                distanceTravelled = 1000.0,
+                type = VehicleType.BOAT,
+                fuelType = FuelType.NUCLEAR
+            )
+        }
+    }
+
+
+    // Тест для CollectionManager(добавление и получение транспортного средства)
+    @Test
+    fun testAddAndGetVehicle() {
+        val manager = CollectionManager("test.csv")
+        val vehicle = Vehicle(
+            id = 1,
+            name = "Truck",
+            coordinates = Coordinates(10, 20f),
+            creationDate = System.currentTimeMillis(),
+            enginePower = 200.0,
+            distanceTravelled = 5000.0,
+            type = null,
+            fuelType = null
+        )
+
+        manager.addVehicle(vehicle)
+
+        assertEquals(1, manager.size())
+        assertNotNull(manager.getById(1))
+        assertEquals("Truck", manager.getById(1)?.name)
+    }
+
+    // Тест для AddIfMaxCommand - добавление только если транспортное средство максимальное
+    @Test
+    fun testAddIfMaxCommand() {
+        val mockIO = mockk<IOManager>()
+        val mockCollection = mockk<CollectionManager>()
+        val mockReader = mockk<VehicleReader>()
+
+        val command = AddIfMaxCommand(mockReader)
+        val newVehicle = Vehicle(
+            id = 2,
+            name = "MaxCar",
+            coordinates = Coordinates(500, 600f),
+            creationDate = System.currentTimeMillis(),
+            enginePower = 300.0,
+            distanceTravelled = 10000.0,
+            type = VehicleType.BICYCLE,
+            fuelType = FuelType.DIESEL
+        )
+
+        val maxVehicle = Vehicle(
+            id = 1,
+            name = "OldCar",
+            coordinates = Coordinates(10, 20f),
+            creationDate = System.currentTimeMillis(),
+            enginePower = 200.0,
+            distanceTravelled = 5000.0,
+            type = VehicleType.HOVERBOARD,
+            fuelType = FuelType.DIESEL
+        )
+
+        every { mockReader.readVehicle() } returns newVehicle
+        every { mockCollection.getMax() } returns maxVehicle
+        every { mockCollection.addVehicle(newVehicle) } returns newVehicle
+        every { mockIO.outputLine(any<String>()) } returns Unit
+
+        command.execute(emptyList(), mockCollection, mockIO)
+
+        verify { mockCollection.addVehicle(newVehicle) }
+        verify { mockIO.outputLine("Vehicle added with ID: ${newVehicle.id}") }
     }
 }
