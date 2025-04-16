@@ -36,7 +36,7 @@ class AppTest {
         assertEquals(0, vehicle1.compareTo(vehicle1))
     }
 
-    // Тест для проверки работы с enum типами
+    // Тест для проверки работы с enum
     @Test
     fun testVehicleEnums() {
         val vehicle = Vehicle(
@@ -211,7 +211,7 @@ class AppTest {
     }
 
 
-    // Тест для CollectionManager: добавление и получение транспортного средства
+    // Тест для CollectionManager(добавление и получение транспортного средства)
     @Test
     fun testAddAndGetVehicle() {
         val manager = CollectionManager("test.csv")
@@ -233,7 +233,7 @@ class AppTest {
         assertEquals("Truck", manager.getById(1)?.name)
     }
 
-    // Тест для AddIfMaxCommand: добавление только если транспортное средство максимальное
+    // Тест для AddIfMaxCommand - добавление только если транспортное средство максимальное
     @Test
     fun testAddIfMaxCommand() {
         val mockIO = mockk<IOManager>()

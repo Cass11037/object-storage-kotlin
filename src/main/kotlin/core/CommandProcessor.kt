@@ -150,7 +150,7 @@ class CommandProcessor(
 
         try {
             while (ioManager.hasNextLine()) {
-                val line = ioManager.readLine()?.trim() ?: continue
+                val line = ioManager.readLine().trim() ?: continue
                 if (line.isNotEmpty()) {
                     ioManager.outputLine("[Script]> $line")
                     when {
@@ -167,8 +167,8 @@ class CommandProcessor(
     private fun processAddCommandInScript() {
         val vehicleData = mutableListOf<String>()
         while (ioManager.hasNextLine() && vehicleData.size < 7) {
-            val line = ioManager.readLine()?.trim()
-            if (line != null && line.isNotEmpty()) {
+            val line = ioManager.readLine().trim()
+            if (line.isNotEmpty()) {
                 vehicleData.add(line)
             }
         }
