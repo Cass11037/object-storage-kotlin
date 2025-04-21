@@ -4,6 +4,7 @@ plugins {
     kotlin("plugin.serialization") version "1.9.0"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     id("org.jetbrains.dokka") version "2.0.0"
+    id("com.xcporter.metaview") version "0.0.6"
 }
 
 group = "org.example"
@@ -38,6 +39,26 @@ application {
     mainClass.set("org.example.MainKt")
 }
 
+generateUml {
+    classTree {
+        // Укажите целевую директорию с исходным кодом (исключая тесты)
+        target = file("src/main/kotlin")
+
+        // Исключите тестовые классы и другие нежелательные элементы
+        splitDelegates = listOf("AppTest")
+
+        // Настройте выходной файл
+        outputFile = "project_diagram.md"
+
+        // Группировка по пакетам (если поддерживается)
+        style = listOf(
+            "skinparam packageBackgroundColor #F0F8FF",
+            "skinparam classBackgroundColor #FFFFFF"
+        )
+    }
+}
+
+
 tasks {
     shadowJar {
         archiveBaseName.set("object-kotlin-storage")
@@ -47,4 +68,6 @@ tasks {
             attributes["Main-Class"] = application.mainClass.get()
         }
     }
+
 }
+
